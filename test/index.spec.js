@@ -8,11 +8,14 @@ process.env.NODE_ENV = 'test';
 const { expect } = require('chai');
 const {
   withDefaults,
-  createQueue
+  createQueue,
+  stop
 } = require('../');
 
 
 describe('kue common', () => {
+
+  beforeEach(done => stop(done));
 
   it('should merge options with defaults', () => {
     expect(withDefaults).to.exist;
@@ -45,17 +48,33 @@ describe('kue common', () => {
     expect(queue.options.redis).to.be.eql({ port: 6379, host: '127.0.0.1' });
   });
 
-  it.skip('should be able to create queue with custom options', () => {
-    const options = { timeout: 8000, attempts: 5 };
+  it('should ensure single queue per process', () => {
+    const first = createQueue();
+    expect(first).to.exist;
+
+    const second = createQueue();
+    expect(second).to.exist;
+
+    expect(first.id).to.be.equal(second.id);
+  });
+
+  it('should be able to create queue with custom options', () => {
+    const options = {
+      timeout: 8000,
+      concurrency: 5,
+      attempts: 5,
+      redis: 'redis://localhost:6379'
+    };
 
     const queue = createQueue(options);
     expect(queue).to.exist;
-    expect(queue.options.timeout).to.be.equal(8000);
-    expect(queue.options.concurrency).to.be.equal(10);
-    expect(queue.options.attempts).to.be.equal(5);
+    expect(queue.options.timeout).to.be.equal(options.timeout);
+    expect(queue.options.concurrency).to.be.equal(options.concurrency);
+    expect(queue.options.attempts).to.be.equal(options.attempts);
     expect(queue.options.backoff).to.be.eql({ type: 'exponential' });
     expect(queue.options.removeOnComplete).to.be.equal(true);
-    expect(queue.options.redis).to.be.eql({ port: 6379, host: '127.0.0.1' });
+    expect(queue.options.redis)
+      .to.be.eql({ port: '6379', db: 0, host: 'localhost', options: {} });
   });
 
 });

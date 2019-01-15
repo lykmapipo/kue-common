@@ -9,6 +9,10 @@ const Queue = require('kue');
 // const { Job } = Queue;
 
 
+/* refs */
+let queue;
+
+
 /**
  * @function redisUrl
  * @name redisUrl
@@ -91,22 +95,69 @@ const createQueue = (optns) => {
 
   // ensure only one instance of Queue exists per process
   if (Queue.singleton) {
-    return Queue.singleton;
+    queue = Queue.singleton;
+    return queue;
   }
 
   // store passed options into Queue
   Queue.prototype.options = options;
 
   // instatiate kue
-  const queue = Queue.createQueue(options);
+  queue = Queue.createQueue(options);
 
   // return queue
   return queue;
 };
 
 
+/**
+ * @function createQueue
+ * @name createQueue
+ * @description create or return current queue instance.
+ * @param {Object} [opts] valid queue creation options.
+ * @return {Queue} valid kue.Queue instance.
+ * @see {@link https://github.com/Automattic/kue#redis-connection-settings}
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const stop = (optns, cb) => {
+  // normalize arguments
+  const options = withDefaults(_.isFunction(optns) ? {} : optns);
+  const done = _.isFunction(optns) ? optns : (cb || _.noop);
+
+  // obtain shutdown options
+  const { timeout } = options;
+
+  // TODO clear any other clients
+  // TODO remove all queue listeners?
+
+  // shutdown queue instance if available
+  if (queue && !queue.shuttingDown) {
+    const afterShutdown = error => {
+      // reset queue when shutdown succeed
+      if (!error) {
+        queue = undefined;
+      }
+      // continue
+      done(error, queue);
+    };
+    queue.shutdown(timeout, afterShutdown);
+  }
+
+  // no queue instance, continue
+  else {
+    done(null, queue);
+  }
+};
+
+
 /* export */
 module.exports = exports = {
   withDefaults,
-  createQueue
+  createQueue,
+  stop
 };
