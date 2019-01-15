@@ -5,6 +5,8 @@
 const _ = require('lodash');
 const { compact } = require('@lykmapipo/common');
 const { getBoolean, getNumber, getString } = require('@lykmapipo/env');
+const Queue = require('kue');
+// const { Job } = Queue;
 
 
 /**
@@ -60,7 +62,51 @@ const withDefaults = (optns) => {
 };
 
 
+/**
+ * @function createQueue
+ * @name createQueue
+ * @description create or return current queue instance.
+ * @param {Object} [opts] valid queue creation options.
+ * @return {Queue} valid kue.Queue instance.
+ * @see {@link https://github.com/Automattic/kue#redis-connection-settings}
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { createQueue } = require('@lykmapipo/kue-common');
+ *
+ * // with default options
+ * const queue = createQueue();
+ *
+ * // with options
+ * const options = { redis: 'redis://example.com:1234?redis_option=value' };
+ * const queue = createQueue(options);
+ */
+const createQueue = (optns) => {
+  // prepare options
+  const options = withDefaults(optns);
+
+  // ensure only one instance of Queue exists per process
+  if (Queue.singleton) {
+    return Queue.singleton;
+  }
+
+  // store passed options into Queue
+  Queue.prototype.options = options;
+
+  // instatiate kue
+  const queue = Queue.createQueue(options);
+
+  // return queue
+  return queue;
+};
+
+
 /* export */
 module.exports = exports = {
-  withDefaults
+  withDefaults,
+  createQueue
 };
