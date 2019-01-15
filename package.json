@@ -1,0 +1,62 @@
+{
+  "name": "@lykmapipo/kue-common",
+  "version": "0.1.0",
+  "description": "Re-usable helpers for kue.",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lykmapipo/kue-common.git"
+  },
+  "keywords": [
+    "lykmapipo",
+    "kue",
+    "redis",
+    "start",
+    "stop",
+    "clear",
+    "process",
+    "worker",
+    "queue"
+  ],
+  "contributors": [
+    {
+      "name": "lykmapipo",
+      "email": "lallyelias87@gmail.com",
+      "url": "https://github.com/lykmapipo"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lykmapipo/kue-common/issues",
+    "email": "lallyelias87@gmail.com"
+  },
+  "homepage": "https://github.com/lykmapipo/kue-common",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "grunt": "^1.0.3",
+    "grunt-contrib-jshint": "^2.0.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-mocha-test": "^0.13.3",
+    "jshint-stylish": "^2.2.1",
+    "kue": ">=0.11.6",
+    "mocha": "^5.2.0",
+    "redis": ">=2.8.0"
+  },
+  "peerDependencies": {
+    "kue": ">=0.11.6",
+    "redis": ">=2.8.0"
+  },
+  "dependencies": {
+    "@lykmapipo/common": ">=0.2.0",
+    "@lykmapipo/env": ">=0.3.3",
+    "async": ">=2.6.1",
+    "lodash": ">=4.17.11"
+  },
+  "engines": {
+    "node": ">=8.11.1",
+    "npm": ">=5.6.0"
+  }
+}
