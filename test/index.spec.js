@@ -9,6 +9,7 @@ const { expect } = require('chai');
 const {
   withDefaults,
   createQueue,
+  createJob,
   stop
 } = require('../');
 
@@ -75,6 +76,52 @@ describe('kue common', () => {
     expect(queue.options.removeOnComplete).to.be.equal(true);
     expect(queue.options.redis)
       .to.be.eql({ port: '6379', db: 0, host: 'localhost', options: {} });
+  });
+
+  it('should be able to create job with default options', () => {
+    expect(createJob).to.exist;
+    expect(createJob).to.be.a('function');
+    expect(createJob.name).to.be.equal('createJob');
+    expect(createJob.length).to.be.equal(2);
+
+    const options = {
+      type: 'email',
+      data: { to: 'tj@learnboost.com' }
+    };
+    const job = createJob(options);
+    expect(job).to.exist;
+    expect(job.type).to.be.equal(options.type);
+    /*jshint camelcase:false */
+    expect(job._max_attempts).to.be.equal(3);
+    expect(job._priority).to.be.equal(0);
+    expect(job._backoff).to.be.eql({ type: 'exponential' });
+    expect(job._removeOnComplete).to.be.true;
+    /*jshint camelcase:true */
+    expect(job.data).to.be.eql(options.data);
+  });
+
+  it('should be able to create job with custom options', () => {
+    expect(createJob).to.exist;
+    expect(createJob).to.be.a('function');
+    expect(createJob.name).to.be.equal('createJob');
+    expect(createJob.length).to.be.equal(2);
+
+    const options = {
+      type: 'email',
+      data: { to: 'tj@learnboost.com' },
+      attempts: 4,
+      priority: 'high'
+    };
+    const job = createJob(options);
+    expect(job).to.exist;
+    expect(job.type).to.be.equal(options.type);
+    /*jshint camelcase:false */
+    expect(job._max_attempts).to.be.equal(4);
+    expect(job._priority).to.be.equal(-10);
+    expect(job._backoff).to.be.eql({ type: 'exponential' });
+    expect(job._removeOnComplete).to.be.true;
+    /*jshint camelcase:true */
+    expect(job.data).to.be.eql(options.data);
   });
 
 });

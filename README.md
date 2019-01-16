@@ -30,6 +30,7 @@ process.env.REDIS_URL
 process.env.KUE_REDIS_URL
 process.env.KUE_CONCURRENCY
 process.env.KUE_MAX_ATTEMPTS
+process.env.KUE_PRIORITY
 process.env.KUE_REMOVE_ON_COMPLETE
 process.env.KUE_TIMEOUT
 ```

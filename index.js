@@ -55,6 +55,7 @@ const withDefaults = (optns) => {
     timeout: getNumber('KUE_TIMEOUT', 5000),
     concurrency: getNumber('KUE_CONCURRENCY', 10),
     attempts: getNumber('KUE_MAX_ATTEMPTS', 3),
+    priority: getString('KUE_PRIORITY', 'normal'),
     backoff: ({ type: 'exponential' }),
     removeOnComplete: getBoolean('KUE_REMOVE_ON_COMPLETE', true),
     redis: redisUrl(),
@@ -111,6 +112,64 @@ const createQueue = (optns) => {
 
 
 /**
+ * @function createJob
+ * @name createJob
+ * @description create and return new job instance.
+ * @param {Object} opts valid job creation options.
+ * @param {Object} opts.type valid job type.
+ * @param {Object} opts.data valid job data.
+ * @return {Job} valid kue.Job instance.
+ * @see {@link https://github.com/Automattic/kue#creating-jobs}
+ * @see {@link https://github.com/Automattic/kue#redis-connection-settings}
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { createJob } = require('@lykmapipo/kue-common');
+ *
+ * // with default options
+ * const optns = { type: 'email', data: { to:'tj@learnboost.com' } };
+ * const job = createJob(optns);
+ * createJob(optns, (error, job) => { ... });
+ *
+ * // with options
+ * const optns = { type: 'email', data: { to:'tj@learnboost.com' }, attempt: 5 };
+ * const job = createJob(optns);
+ * createJob(optns, (error, job) => { ... });
+ */
+const createJob = (optns, cb) => {
+  // normalize arguments
+  const options = withDefaults(_.isFunction(optns) ? {} : optns);
+  const done = _.isFunction(optns) ? optns : (cb || _.noop);
+
+  // ensure queue
+  const queue = createQueue(options);
+
+  // prepare job creation options
+  let { type, priority, attempts, backoff } = options;
+  let { removeOnComplete, data = {} } = options;
+  type = (data.type || type);
+  priority = (data.priority || priority);
+  attempts = (data.attempts || attempts);
+  backoff = (data.backoff || backoff);
+  removeOnComplete = (data.removeOnComplete || removeOnComplete);
+
+  // create job
+  const job = queue.createJob(type, data); // TODO: save optns?
+  job.attempts(attempts);
+  job.backoff(backoff);
+  job.priority(priority);
+  job.removeOnComplete(removeOnComplete);
+
+  // return job
+  return job.save(done);
+};
+
+
+/**
  * @function createQueue
  * @name createQueue
  * @description create or return current queue instance.
@@ -159,5 +218,6 @@ const stop = (optns, cb) => {
 module.exports = exports = {
   withDefaults,
   createQueue,
+  createJob,
   stop
 };
