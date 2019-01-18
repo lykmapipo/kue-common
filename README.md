@@ -19,9 +19,7 @@ npm install --save @lykmapipo/kue-common
 
 ## Usage
 
-```js
-
-```
+> WIP
 
 ### Environment
 If below options are available in `process.env` will be used as default.

@@ -1,5 +1,6 @@
 {
-  "js": {
+  "js":
+  {
     "jslint_happy": true,
     "indent_size": 2,
     "wrap_line_length": 80
