@@ -146,8 +146,6 @@ const createClient = (optns) => {
 };
 
 
-
-
 /**
  * @function createPubSubClient
  * @name createPubSubClient
