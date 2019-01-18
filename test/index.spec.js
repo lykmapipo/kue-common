@@ -10,6 +10,7 @@ const {
   withDefaults,
   createQueue,
   createClient,
+  createPubSubClient,
   createJob,
   clear,
   stop
@@ -51,6 +52,26 @@ describe('kue common', () => {
     expect(first).to.exist;
 
     const second = createClient();
+    expect(second).to.exist;
+
+    expect(first.id).to.be.equal(second.id);
+  });
+
+  it('should be able to create redis pubsub client with default options', () => {
+    expect(createPubSubClient).to.exist;
+    expect(createPubSubClient).to.be.a('function');
+    expect(createPubSubClient.name).to.be.equal('createPubSubClient');
+    expect(createPubSubClient.length).to.be.equal(1);
+
+    const client = createPubSubClient();
+    expect(client).to.exist;
+  });
+
+  it('should ensure single redis pubsub client per queue per process', () => {
+    const first = createPubSubClient();
+    expect(first).to.exist;
+
+    const second = createPubSubClient();
     expect(second).to.exist;
 
     expect(first.id).to.be.equal(second.id);

@@ -11,6 +11,7 @@ const Queue = require('kue');
 /* refs */
 let queue;
 let client;
+let pubsub;
 
 
 /**
@@ -142,6 +143,43 @@ const createClient = (optns) => {
 
   // return client
   return client;
+};
+
+
+
+
+/**
+ * @function createPubSubClient
+ * @name createPubSubClient
+ * @description create or return current redis client instance for pubsub usage.
+ * @param {Object} [opts] valid redis client options.
+ * @return {Object} valid redis instance.
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { createPubSub } = require('@lykmapipo/kue-common');
+ *
+ * // with default options
+ * const pubsub = createPubSub();
+ *
+ * // with options
+ * const options = { redis: 'redis://example.com:1234?redis_option=value' };
+ * const pubsub = createPubSub(options);
+ */
+const createPubSubClient = (optns) => {
+  // ensure single redis pubsub client per Queue per process
+  if (!pubsub) {
+    const queue = createQueue(optns);
+    pubsub = queue.pubsub = Queue.redis.pubsubClient();
+    pubsub.id = pubsub.id || Date.now();
+  }
+
+  // return pubsub client
+  return pubsub;
 };
 
 
@@ -293,8 +331,10 @@ const stop = (optns, cb) => {
     const afterShutdown = error => {
       // reset queue and client(s) when shutdown succeed
       if (!error) {
+        Queue.redis.reset();
         queue = undefined;
         client = undefined;
+        pubsub = undefined;
       }
       // continue
       done(error, queue);
@@ -314,6 +354,7 @@ module.exports = exports = {
   withDefaults,
   createQueue,
   createClient,
+  createPubSubClient,
   createJob,
   clear,
   stop
