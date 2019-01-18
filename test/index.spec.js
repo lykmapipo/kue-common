@@ -33,6 +33,7 @@ const {
   createClient,
   createPubSubClient,
   createJob,
+  dispatch,
   clear,
   stop
 } = require('../');
@@ -196,18 +197,56 @@ describe('kue common', () => {
   });
 
   it('should be able to create job with custom options', () => {
-    expect(createJob).to.exist;
-    expect(createJob).to.be.a('function');
-    expect(createJob.name).to.be.equal('createJob');
-    expect(createJob.length).to.be.equal(2);
-
     const options = {
       type: 'email',
       data: { to: 'tj@learnboost.com' },
       attempts: 4,
       priority: 'high'
     };
+
     const job = createJob(options);
+    expect(job).to.exist;
+    expect(job.type).to.be.equal(options.type);
+    /*jshint camelcase:false */
+    expect(job._max_attempts).to.be.equal(4);
+    expect(job._priority).to.be.equal(-10);
+    expect(job._backoff).to.be.eql({ type: 'exponential' });
+    expect(job._removeOnComplete).to.be.true;
+    /*jshint camelcase:true */
+    expect(job.data).to.be.eql(options.data);
+  });
+
+  it('should be able to dispatch job with default options', () => {
+    expect(dispatch).to.exist;
+    expect(dispatch).to.be.a('function');
+    expect(dispatch.name).to.be.equal('dispatch');
+    expect(dispatch.length).to.be.equal(2);
+
+    const options = {
+      type: 'email',
+      data: { to: 'tj@learnboost.com' }
+    };
+    const job = dispatch(options);
+    expect(job).to.exist;
+    expect(job.type).to.be.equal(options.type);
+    /*jshint camelcase:false */
+    expect(job._max_attempts).to.be.equal(3);
+    expect(job._priority).to.be.equal(0);
+    expect(job._backoff).to.be.eql({ type: 'exponential' });
+    expect(job._removeOnComplete).to.be.true;
+    /*jshint camelcase:true */
+    expect(job.data).to.be.eql(options.data);
+  });
+
+  it('should be able to dispatch job with custom options', () => {
+    const options = {
+      type: 'email',
+      data: { to: 'tj@learnboost.com' },
+      attempts: 4,
+      priority: 'high'
+    };
+
+    const job = dispatch(options);
     expect(job).to.exist;
     expect(job.type).to.be.equal(options.type);
     /*jshint camelcase:false */

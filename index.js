@@ -287,12 +287,12 @@ const createPubSubClient = (optns) => {
  *
  * // with default options
  * const optns = { type: 'email', data: { to:'tj@learnboost.com' } };
- * const job = createJob(optns);
+ * const job = createJob(optns); // no callback
  * createJob(optns, (error, job) => { ... });
  *
  * // with options
  * const optns = { type: 'email', data: { to:'tj@learnboost.com' }, attempt: 5 };
- * const job = createJob(optns);
+ * const job = createJob(optns); // no callback
  * createJob(optns, (error, job) => { ... });
  */
 const createJob = (optns, cb) => {
@@ -318,6 +318,58 @@ const createJob = (optns, cb) => {
   job.backoff(backoff);
   job.priority(priority);
   job.removeOnComplete(removeOnComplete);
+
+  // save and return job
+  return job.save(done);
+};
+
+
+
+const defineJob = (optns) => {
+  // prepare options
+  const options = withDefaults(optns);
+  return options;
+};
+
+
+/**
+ * @function dispatch
+ * @name dispatch
+ * @description create new job instance from previously job definition.
+ * @param {Object} opts valid job creation options.
+ * @param {Object} opts.type valid job type.
+ * @param {Object} opts.data valid job data.
+ * @param {Function} [cb] callback to invoke on success or failure.
+ * @return {Job} valid kue.Job instance.
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { dispatch } = require('@lykmapipo/kue-common');
+ *
+ * // with default options
+ * const optns = { type: 'email', data: { to:'tj@learnboost.com' } };
+ * const job = dispatch(optns); // no callback
+ * dispatch(optns, (error, job) => { ... });
+ *
+ * // with options
+ * const optns = { type: 'email', data: { to:'tj@learnboost.com' }, attempt: 5 };
+ * const job = dispatch(optns); // no callback
+ * dispatch(optns, (error, job) => { ... });
+ */
+const dispatch = (optns, cb) => {
+  // normalize arguments
+  const options = withDefaults(_.isFunction(optns) ? {} : optns);
+  const done = _.isFunction(optns) ? optns : (cb || _.noop);
+
+  // TODO ensure job type provided
+  // TODO ensure queue can process give job type
+
+  // create job
+  const job = createJob(options);
 
   // save and return job
   return job.save(done);
@@ -456,6 +508,8 @@ module.exports = exports = {
   createClient,
   createPubSubClient,
   createJob,
+  defineJob,
+  dispatch,
   clear,
   stop,
 };
