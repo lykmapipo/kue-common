@@ -15,6 +15,14 @@ const {
   FAILED,
   COMPLETE,
   REMOVE,
+  JOB_ENQUEUE,
+  JOB_START,
+  JOB_PROMOTION,
+  JOB_PROGRESS,
+  JOB_FAILED_ATTEMPT,
+  JOB_FAILED,
+  JOB_COMPLETE,
+  JOB_REMOVE,
   withDefaults,
   createQueue,
   createClient,
@@ -39,6 +47,17 @@ describe('kue common', () => {
     expect(FAILED).to.be.equal('failed');
     expect(COMPLETE).to.be.equal('complete');
     expect(REMOVE).to.be.equal('remove');
+  });
+
+  it('should expose queue events as constants', () => {
+    expect(JOB_ENQUEUE).to.be.equal('job enqueue');
+    expect(JOB_START).to.be.equal('job start');
+    expect(JOB_PROMOTION).to.be.equal('job promotion');
+    expect(JOB_PROGRESS).to.be.equal('job progress');
+    expect(JOB_FAILED_ATTEMPT).to.be.equal('job failed attempt');
+    expect(JOB_FAILED).to.be.equal('job failed');
+    expect(JOB_COMPLETE).to.be.equal('job complete');
+    expect(JOB_REMOVE).to.be.equal('job remove');
   });
 
   it('should merge options with defaults', () => {

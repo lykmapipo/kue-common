@@ -23,7 +23,8 @@ let pubsub;
  * @version 0.1.0
  * @private
  * @example
- * const { COMPLETE } = require('@lykmapipo/kue-common');
+ * const { COMPLETE, createJob } = require('@lykmapipo/kue-common');
+ * const job = createJob({ ... });
  * job.on(COMPLETE, result => { ... });
  */
 const ENQUEUE = 'enqueue';
@@ -34,6 +35,29 @@ const FAILED_ATTEMPT = 'failed attempt';
 const FAILED = 'failed';
 const COMPLETE = 'complete';
 const REMOVE = 'remove';
+
+
+/**
+ * @description queue specific events fired via pubsub.
+ * @see {@link https://github.com/Automattic/kue#queue-events}
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @private
+ * @example
+ * const { COMPLETE, createQueue } = require('@lykmapipo/kue-common');
+ * const queue = createQueue({ ... });
+ * queue.on(JOB_COMPLETE, result => { ... });
+ */
+const JOB_ENQUEUE = 'job enqueue';
+const JOB_START = 'job start';
+const JOB_PROMOTION = 'job promotion';
+const JOB_PROGRESS = 'job progress';
+const JOB_FAILED_ATTEMPT = 'job failed attempt';
+const JOB_FAILED = 'job failed';
+const JOB_COMPLETE = 'job complete';
+const JOB_REMOVE = 'job remove';
 
 
 /**
@@ -395,6 +419,14 @@ module.exports = exports = {
   FAILED,
   COMPLETE,
   REMOVE,
+  JOB_ENQUEUE,
+  JOB_START,
+  JOB_PROMOTION,
+  JOB_PROGRESS,
+  JOB_FAILED_ATTEMPT,
+  JOB_FAILED,
+  JOB_COMPLETE,
+  JOB_REMOVE,
   withDefaults,
   createQueue,
   createClient,
