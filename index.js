@@ -34,6 +34,24 @@ const redisUrl = () => {
 
 
 /**
+ * @function reset
+ * @name reset
+ * @description reset internal states and refs
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @private
+ */
+const reset = () => {
+  Queue.redis.reset();
+  queue = undefined;
+  client = undefined;
+  pubsub = undefined;
+};
+
+
+/**
  * @function withDefaults
  * @name withDefaults
  * @description merge provided options with defaults.
@@ -329,10 +347,7 @@ const stop = (optns, cb) => {
     const afterShutdown = error => {
       // reset queue and client(s) when shutdown succeed
       if (!error) {
-        Queue.redis.reset();
-        queue = undefined;
-        client = undefined;
-        pubsub = undefined;
+        reset();
       }
       // continue
       done(error, queue);
