@@ -6,17 +6,17 @@ const _ = require('lodash');
 const { compact } = require('@lykmapipo/common');
 const { getBoolean, getNumber, getString } = require('@lykmapipo/env');
 const Queue = require('kue');
-// const { Job } = Queue;
 
 
 /* refs */
 let queue;
+let client;
 
 
 /**
  * @function redisUrl
  * @name redisUrl
- * @description derive redis url
+ * @description derive redis url from sources
  * @return {String|Object} redis connection string or object
  * @author lally elias <lallyelias87@mail.com>
  * @license MIT
@@ -94,20 +94,54 @@ const createQueue = (optns) => {
   // prepare options
   const options = withDefaults(optns);
 
-  // ensure only one instance of Queue exists per process
-  if (Queue.singleton) {
-    queue = Queue.singleton;
+  // ensure single Queue instance per process
+  if (queue || Queue.singleton) {
+    queue = (queue || Queue.singleton);
     return queue;
   }
 
   // store passed options into Queue
   Queue.prototype.options = options;
 
-  // instatiate kue
+  // instatiate Queue
   queue = Queue.createQueue(options);
 
   // return queue
   return queue;
+};
+
+
+/**
+ * @function createClient
+ * @name createClient
+ * @description create or return current redis client instance.
+ * @param {Object} [opts] valid redis client options.
+ * @return {Object} valid redis instance.
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { createClient } = require('@lykmapipo/kue-common');
+ *
+ * // with default options
+ * const client = createClient();
+ *
+ * // with options
+ * const options = { redis: 'redis://example.com:1234?redis_option=value' };
+ * const client = createClient(options);
+ */
+const createClient = (optns) => {
+  // ensure single redis client per Queue per process
+  if (!client) {
+    client = createQueue(optns).client;
+    client.id = client.id || Date.now();
+  }
+
+  // return client
+  return client;
 };
 
 
@@ -118,6 +152,7 @@ const createQueue = (optns) => {
  * @param {Object} opts valid job creation options.
  * @param {Object} opts.type valid job type.
  * @param {Object} opts.data valid job data.
+ * @param {Function} [cb] callback to invoke on success or failure.
  * @return {Job} valid kue.Job instance.
  * @see {@link https://github.com/Automattic/kue#creating-jobs}
  * @see {@link https://github.com/Automattic/kue#redis-connection-settings}
@@ -164,17 +199,16 @@ const createJob = (optns, cb) => {
   job.priority(priority);
   job.removeOnComplete(removeOnComplete);
 
-  // return job
+  // save and return job
   return job.save(done);
 };
 
 
 /**
- * @function createQueue
- * @name createQueue
- * @description create or return current queue instance.
- * @param {Object} [opts] valid queue creation options.
- * @return {Queue} valid kue.Queue instance.
+ * @function clear
+ * @name clear
+ * @description cleanup and reset current queue states.
+ * @param {Function} [cb] callback to invoke on success or failure.
  * @see {@link https://github.com/Automattic/kue#redis-connection-settings}
  * @author lally elias <lallyelias87@mail.com>
  * @license MIT
@@ -182,6 +216,69 @@ const createJob = (optns, cb) => {
  * @version 0.1.0
  * @static
  * @public
+ * @example
+ * const { clear } = require('@lykmapipo/kue-common');
+ * clear((error) => { ... });
+ */
+const clear = (cb) => {
+  // normalize arguments
+  const done = _.isFunction(cb) ? cb : _.noop;
+
+  // ensure queue
+  const queue = createQueue();
+
+  // obtain redis client
+  const client = createClient();
+
+  // obtain cleanup key pattern
+  const pattern = [queue.options.prefix, '*'].join('');
+
+  const cleanup = (error, keys) => {
+    // back-off in case of error
+    if (error) {
+      done(error);
+    }
+    // continue with cleanup
+    else {
+      // obtain multi to ensure atomicity on cleanup
+      const multi = client.multi();
+
+      // queue delete commands
+      _.forEach(keys, function (key) {
+        multi.del(key);
+      });
+
+      // execute delete command
+      multi.exec(done);
+    }
+  };
+
+  // obtain all queue keys and clear
+  client.keys(pattern, cleanup);
+};
+
+
+/**
+ * @function stop
+ * @name stop
+ * @description stop(shutdown) current running queue instance.
+ * @param {Object} [opts] valid queue shutdown options.
+ * @param {Object} [opts.timeout] time to wait for queue to shutdown.
+ * @param {Function} [cb] callback to invoke on success or failure.
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { stop } = require('@lykmapipo/kue-common');
+ *
+ * // with default options
+ * stop((error) => { ... });
+ *
+ * // with options
+ * stop({ timeout: 5000 }, (error) => { ... });
  */
 const stop = (optns, cb) => {
   // normalize arguments
@@ -191,15 +288,13 @@ const stop = (optns, cb) => {
   // obtain shutdown options
   const { timeout } = options;
 
-  // TODO clear any other clients
-  // TODO remove all queue listeners?
-
   // shutdown queue instance if available
   if (queue && !queue.shuttingDown) {
     const afterShutdown = error => {
-      // reset queue when shutdown succeed
+      // reset queue and client(s) when shutdown succeed
       if (!error) {
         queue = undefined;
+        client = undefined;
       }
       // continue
       done(error, queue);
@@ -218,6 +313,8 @@ const stop = (optns, cb) => {
 module.exports = exports = {
   withDefaults,
   createQueue,
+  createClient,
   createJob,
+  clear,
   stop
 };

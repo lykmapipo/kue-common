@@ -9,13 +9,16 @@ const { expect } = require('chai');
 const {
   withDefaults,
   createQueue,
+  createClient,
   createJob,
+  clear,
   stop
 } = require('../');
 
 
 describe('kue common', () => {
 
+  beforeEach(done => clear(done));
   beforeEach(done => stop(done));
 
   it('should merge options with defaults', () => {
@@ -31,6 +34,26 @@ describe('kue common', () => {
     expect(options.backoff).to.be.eql({ type: 'exponential' });
     expect(options.removeOnComplete).to.be.equal(true);
     expect(options.redis).to.be.eql({ port: 6379, host: '127.0.0.1' });
+  });
+
+  it('should be able to create redis client with default options', () => {
+    expect(createClient).to.exist;
+    expect(createClient).to.be.a('function');
+    expect(createClient.name).to.be.equal('createClient');
+    expect(createClient.length).to.be.equal(1);
+
+    const client = createClient();
+    expect(client).to.exist;
+  });
+
+  it('should ensure single redis client per queue per process', () => {
+    const first = createClient();
+    expect(first).to.exist;
+
+    const second = createClient();
+    expect(second).to.exist;
+
+    expect(first.id).to.be.equal(second.id);
   });
 
   it('should be able to create queue with default options', () => {
@@ -123,5 +146,8 @@ describe('kue common', () => {
     /*jshint camelcase:true */
     expect(job.data).to.be.eql(options.data);
   });
+
+  after(done => clear(done));
+  after(done => stop(done));
 
 });
