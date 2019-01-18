@@ -7,6 +7,11 @@ process.env.NODE_ENV = 'test';
 /* dependencies */
 const { expect } = require('chai');
 const {
+  PRIORITY_LOW,
+  PRIORITY_NORMAL,
+  PRIORITY_MEDIUM,
+  PRIORITY_HIGH,
+  PRIORITY_CRITICAL,
   ENQUEUE,
   START,
   PROMOTION,
@@ -58,6 +63,14 @@ describe('kue common', () => {
     expect(JOB_FAILED).to.be.equal('job failed');
     expect(JOB_COMPLETE).to.be.equal('job complete');
     expect(JOB_REMOVE).to.be.equal('job remove');
+  });
+
+  it('should expose job priorities as contants', () => {
+    expect(PRIORITY_LOW).to.be.equal('low');
+    expect(PRIORITY_NORMAL).to.be.equal('normal');
+    expect(PRIORITY_MEDIUM).to.be.equal('medium');
+    expect(PRIORITY_HIGH).to.be.equal('high');
+    expect(PRIORITY_CRITICAL).to.be.equal('critical');
   });
 
   it('should merge options with defaults', () => {

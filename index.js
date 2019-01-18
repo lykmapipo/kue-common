@@ -15,6 +15,25 @@ let pubsub;
 
 
 /**
+ * @description job specific priorities.
+ * @see {@link https://github.com/Automattic/kue#job-priority}
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @private
+ * @example
+ * const { PRIORITY_HIGH, createJob } = require('@lykmapipo/kue-common');
+ * const job = createJob({ priority: PRIORITY_HIGH });
+ */
+const PRIORITY_LOW = 'low';
+const PRIORITY_NORMAL = 'normal';
+const PRIORITY_MEDIUM = 'medium';
+const PRIORITY_HIGH = 'high';
+const PRIORITY_CRITICAL = 'critical';
+
+
+/**
  * @description job specific events fired via pubsub.
  * @see {@link https://github.com/Automattic/kue#job-events}
  * @author lally elias <lallyelias87@mail.com>
@@ -411,6 +430,11 @@ const stop = (optns, cb) => {
 
 /* export */
 module.exports = exports = {
+  PRIORITY_LOW,
+  PRIORITY_NORMAL,
+  PRIORITY_MEDIUM,
+  PRIORITY_HIGH,
+  PRIORITY_CRITICAL,
   ENQUEUE,
   START,
   PROMOTION,
