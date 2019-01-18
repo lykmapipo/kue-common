@@ -7,6 +7,14 @@ process.env.NODE_ENV = 'test';
 /* dependencies */
 const { expect } = require('chai');
 const {
+  ENQUEUE,
+  START,
+  PROMOTION,
+  PROGRESS,
+  FAILED_ATTEMPT,
+  FAILED,
+  COMPLETE,
+  REMOVE,
   withDefaults,
   createQueue,
   createClient,
@@ -21,6 +29,17 @@ describe('kue common', () => {
 
   beforeEach(done => clear(done));
   beforeEach(done => stop(done));
+
+  it('should expose job events as constants', () => {
+    expect(ENQUEUE).to.be.equal('enqueue');
+    expect(START).to.be.equal('start');
+    expect(PROMOTION).to.be.equal('promotion');
+    expect(PROGRESS).to.be.equal('progress');
+    expect(FAILED_ATTEMPT).to.be.equal('failed attempt');
+    expect(FAILED).to.be.equal('failed');
+    expect(COMPLETE).to.be.equal('complete');
+    expect(REMOVE).to.be.equal('remove');
+  });
 
   it('should merge options with defaults', () => {
     expect(withDefaults).to.exist;

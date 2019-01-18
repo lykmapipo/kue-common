@@ -15,6 +15,28 @@ let pubsub;
 
 
 /**
+ * @description job specific events fired via pubsub.
+ * @see {@link https://github.com/Automattic/kue#job-events}
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @private
+ * @example
+ * const { COMPLETE } = require('@lykmapipo/kue-common');
+ * job.on(COMPLETE, result => { ... });
+ */
+const ENQUEUE = 'enqueue';
+const START = 'start';
+const PROMOTION = 'promotion';
+const PROGRESS = 'progress';
+const FAILED_ATTEMPT = 'failed attempt';
+const FAILED = 'failed';
+const COMPLETE = 'complete';
+const REMOVE = 'remove';
+
+
+/**
  * @function redisUrl
  * @name redisUrl
  * @description derive redis url from sources
@@ -76,6 +98,7 @@ const withDefaults = (optns) => {
     attempts: getNumber('KUE_MAX_ATTEMPTS', 3),
     priority: getString('KUE_PRIORITY', 'normal'),
     backoff: ({ type: 'exponential' }),
+    jobEvents: getBoolean('KUE_JOB_EVENTS', false),
     removeOnComplete: getBoolean('KUE_REMOVE_ON_COMPLETE', true),
     redis: redisUrl(),
   }, optns);
@@ -364,11 +387,19 @@ const stop = (optns, cb) => {
 
 /* export */
 module.exports = exports = {
+  ENQUEUE,
+  START,
+  PROMOTION,
+  PROGRESS,
+  FAILED_ATTEMPT,
+  FAILED,
+  COMPLETE,
+  REMOVE,
   withDefaults,
   createQueue,
   createClient,
   createPubSubClient,
   createJob,
   clear,
-  stop
+  stop,
 };
