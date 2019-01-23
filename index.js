@@ -738,6 +738,21 @@ const onJobComplete = cb => queue && queue.on(JOB_COMPLETE, cb);
 const onJobRemove = cb => queue && queue.on(JOB_REMOVE, cb);
 
 
+/**
+ * @function onError
+ * @name onError
+ * @description register queue `error` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onError = cb => queue && queue.on('error', cb);
+
+
 /* export */
 module.exports = exports = {
   PRIORITY_LOW,
@@ -780,4 +795,5 @@ module.exports = exports = {
   onJobFailed,
   onJobComplete,
   onJobRemove,
+  onError
 };
