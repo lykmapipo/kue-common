@@ -12,6 +12,7 @@ const Queue = require('kue');
 let queue;
 let client;
 let pubsub;
+let jobs = {};
 
 
 /**
@@ -113,6 +114,7 @@ const reset = () => {
   queue = undefined;
   client = undefined;
   pubsub = undefined;
+  jobs = {};
 };
 
 
@@ -120,7 +122,7 @@ const reset = () => {
  * @function withDefaults
  * @name withDefaults
  * @description merge provided options with defaults.
- * @param  {Object} [optns] provided options
+ * @param {Object} [optns] provided options
  * @return {Object} merged options
  * @author lally elias <lallyelias87@mail.com>
  * @license MIT
@@ -266,6 +268,60 @@ const createPubSubClient = (optns) => {
 
 
 /**
+ * @function isJobDefinition
+ * @name isJobDefinition
+ * @description check if provided object is valid job definition.
+ * @param {Object} job job definition.
+ * @return {Boolean} if object is job definition otherwise false
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @private
+ */
+const isJobDefinition = (job) => {
+  const hasType = (job && !_.isEmpty(job.type));
+  const hasHandler = (job && _.isFunction(job.process));
+  const isValid = (hasType && hasHandler);
+  return isValid;
+};
+
+
+/**
+ * @function defineJob
+ * @name defineJob
+ * @description prepare job definition for later job creation, dispatching and
+ * processing.
+ * @param {Object} def job definition.
+ * @param {Object} def.type unique valid job type.
+ * @param {Object} def.process unique valid job type.
+ * @return {Object[]} current job dictionary.
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { defineJob } = require('@lykmapipo/kue-common');
+ * defineJob({type: 'email', process: (job, done) => { ... }}); // => jobs
+ */
+const defineJob = (def) => {
+  // merge with defaults
+  const job = withDefaults(def);
+
+  // collect valid job definition
+  const isValidJob = isJobDefinition(job);
+  if (isValidJob) {
+    jobs[job.type] = job;
+  }
+
+  // return job definitions
+  return jobs;
+};
+
+
+/**
  * @function createJob
  * @name createJob
  * @description create and return new job instance.
@@ -320,15 +376,7 @@ const createJob = (optns, cb) => {
   job.removeOnComplete(removeOnComplete);
 
   // save and return job
-  return job.save(done);
-};
-
-
-
-const defineJob = (optns) => {
-  // prepare options
-  const options = withDefaults(optns);
-  return options;
+  return job.save(done); // TODO don't save if no cb
 };
 
 
@@ -372,7 +420,7 @@ const dispatch = (optns, cb) => {
   const job = createJob(options);
 
   // save and return job
-  return job.save(done);
+  return job.save(done); //TODO prevent double save?
 };
 
 
@@ -507,8 +555,8 @@ module.exports = exports = {
   createQueue,
   createClient,
   createPubSubClient,
-  createJob,
   defineJob,
+  createJob,
   dispatch,
   clear,
   stop,
