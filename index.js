@@ -145,7 +145,6 @@ const withDefaults = (optns) => {
     priority: getString('KUE_PRIORITY', 'normal'),
     backoff: ({ type: 'exponential' }),
     jobEvents: getBoolean('KUE_JOB_EVENTS', false),
-    jobsPath: getBoolean('KUE_JOBS_PATH', process.cwd()),
     removeOnComplete: getBoolean('KUE_REMOVE_ON_COMPLETE', true),
     redis: redisUrl(),
   }, optns);
@@ -345,13 +344,17 @@ const loadJobs = (optns) => {
   // merge with defaults
   const options = withDefaults(optns);
 
-  // load jobs definititions
-  const { jobsPath } = options;
-  const defs = requireAll({ dirname: jobsPath, recursive: true });
+  try {
+    // load jobs definitions
+    const { jobsPath = `${process.cwd()}/jobs` } = options;
+    const defs = requireAll(jobsPath);
 
-  // collect valid job definitions
-  const loadJob = def => defineJob(def);
-  _.forEach(defs, loadJob);
+    // collect valid job definitions
+    const loadJob = def => defineJob(def);
+    _.forEach(defs, loadJob);
+  } catch (error) {
+    /* ignore*/
+  }
 
   // return job definitions
   return jobs;
@@ -525,6 +528,47 @@ const clear = (cb) => {
 
 
 /**
+ * @function start
+ * @name start
+ * @description load jobs definition and start to process
+ * @param {Object} [options] valid start options
+ * @return {Queue} valid kue.Queue instance.
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { start } = require('@lykmapipo/kue-common');
+ * start();
+ */
+const start = (optns) => {
+  // load jobs definition
+  const jobs = loadJobs(optns);
+
+  // ensure worker queue is initialized
+  const queue = createQueue(optns);
+
+  // start worker for processing jobs
+  if (queue && !_.isEmpty(jobs)) {
+    // register job worker fn
+    const perform = (job, type) => {
+      // fix job ttl exceeded listeners added
+      // see https://github.com/Automattic/kue/issues/1189
+      const currentMaxListener = (queue.getMaxListeners() + job.concurrency);
+      queue.setMaxListeners(currentMaxListener);
+      queue.process(type, job.concurrency, job.process);
+    };
+    _.forEach(jobs, perform);
+  }
+
+  // return queue
+  return queue;
+};
+
+
+/**
  * @function stop
  * @name stop
  * @description stop(shutdown) current running queue instance.
@@ -574,6 +618,126 @@ const stop = (optns, cb) => {
 };
 
 
+/**
+ * @function onJobEnqueue
+ * @name onJobEnqueue
+ * @description register queue `job enqueue` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobEnqueue = cb => queue && queue.on(JOB_ENQUEUE, cb);
+
+
+/**
+ * @function onJobStart
+ * @name onJobStart
+ * @description register queue `job start` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobStart = cb => queue && queue.on(JOB_START, cb);
+
+
+/**
+ * @function onJobPromotion
+ * @name onJobPromotion
+ * @description register queue `job promotion` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobPromotion = cb => queue && queue.on(JOB_PROMOTION, cb);
+
+
+/**
+ * @function onJobProgress
+ * @name onJobProgress
+ * @description register queue `job progress` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobProgress = cb => queue && queue.on(JOB_PROGRESS, cb);
+
+
+/**
+ * @function onFailedAttempt
+ * @name onFailedAttempt
+ * @description register queue `job failed attempt` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobFailedAttempt = cb => queue && queue.on(JOB_FAILED_ATTEMPT, cb);
+
+
+/**
+ * @function onJobFailed
+ * @name onJobFailed
+ * @description register queue `job failed` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobFailed = cb => queue && queue.on(JOB_FAILED, cb);
+
+
+/**
+ * @function onJobComplete
+ * @name onJobComplete
+ * @description register queue `job complete` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobComplete = cb => queue && queue.on(JOB_COMPLETE, cb);
+
+
+/**
+ * @function onJobRemove
+ * @name onJobRemove
+ * @description register queue `job remove` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobRemove = cb => queue && queue.on(JOB_REMOVE, cb);
+
+
 /* export */
 module.exports = exports = {
   PRIORITY_LOW,
@@ -606,5 +770,14 @@ module.exports = exports = {
   createJob,
   dispatch,
   clear,
+  start,
   stop,
+  onJobEnqueue,
+  onJobStart,
+  onJobPromotion,
+  onJobProgress,
+  onJobFailedAttempt,
+  onJobFailed,
+  onJobComplete,
+  onJobRemove,
 };
