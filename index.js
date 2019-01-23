@@ -3,6 +3,7 @@
 
 /* dependencies */
 const _ = require('lodash');
+const requireAll = require('require-all');
 const { compact } = require('@lykmapipo/common');
 const { getBoolean, getNumber, getString } = require('@lykmapipo/env');
 const Queue = require('kue');
@@ -144,6 +145,7 @@ const withDefaults = (optns) => {
     priority: getString('KUE_PRIORITY', 'normal'),
     backoff: ({ type: 'exponential' }),
     jobEvents: getBoolean('KUE_JOB_EVENTS', false),
+    jobsPath: getBoolean('KUE_JOBS_PATH', process.cwd()),
     removeOnComplete: getBoolean('KUE_REMOVE_ON_COMPLETE', true),
     redis: redisUrl(),
   }, optns);
@@ -295,7 +297,7 @@ const isJobDefinition = (job) => {
  * @param {Object} def job definition.
  * @param {Object} def.type unique valid job type.
  * @param {Object} def.process unique valid job type.
- * @return {Object[]} current job dictionary.
+ * @return {Object[]} current job definitions.
  * @author lally elias <lallyelias87@mail.com>
  * @license MIT
  * @since 0.1.0
@@ -315,6 +317,41 @@ const defineJob = (def) => {
   if (isValidJob) {
     jobs[job.type] = job;
   }
+
+  // return job definitions
+  return jobs;
+};
+
+
+/**
+ * @function loadJobs
+ * @name loadJobs
+ * @description load jobs definition and prepare for later job creation,
+ * dispatching and processing.
+ * @param {Object} def loading options.
+ * @param {Object} [def.jobsPath=processs.KUE_JOBS_PATH] jobs definitio path
+ * @return {Object[]} current job definitions.
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { loadJobs } = require('@lykmapipo/kue-common');
+ * loadJobs({type: 'email', process: (job, done) => { ... }}); // => jobs
+ */
+const loadJobs = (optns) => {
+  // merge with defaults
+  const options = withDefaults(optns);
+
+  // load jobs definititions
+  const { jobsPath } = options;
+  const defs = requireAll({ dirname: jobsPath, recursive: true });
+
+  // collect valid job definitions
+  const loadJob = def => defineJob(def);
+  _.forEach(defs, loadJob);
 
   // return job definitions
   return jobs;
@@ -354,7 +391,7 @@ const defineJob = (def) => {
 const createJob = (optns, cb) => {
   // normalize arguments
   const options = withDefaults(_.isFunction(optns) ? {} : optns);
-  const done = _.isFunction(optns) ? optns : (cb || _.noop);
+  const done = _.isFunction(optns) ? optns : cb;
 
   // ensure queue
   const queue = createQueue(options);
@@ -376,7 +413,13 @@ const createJob = (optns, cb) => {
   job.removeOnComplete(removeOnComplete);
 
   // save and return job
-  return job.save(done); // TODO don't save if no cb
+  if (_.isFunction(done)) {
+    return job.save(done);
+  }
+  // return job
+  else {
+    return job;
+  }
 };
 
 
@@ -413,14 +456,17 @@ const dispatch = (optns, cb) => {
   const options = withDefaults(_.isFunction(optns) ? {} : optns);
   const done = _.isFunction(optns) ? optns : (cb || _.noop);
 
-  // TODO ensure job type provided
-  // TODO ensure queue can process give job type
+  // ensure job type provided
+  const { type } = options;
+
+  // ensure queue can process give job type
+  const definition = _.merge({}, jobs[type], options); // TODO no job def?
 
   // create job
-  const job = createJob(options);
+  const job = createJob(definition);
 
   // save and return job
-  return job.save(done); //TODO prevent double save?
+  return job.save(done);
 };
 
 
@@ -556,6 +602,7 @@ module.exports = exports = {
   createClient,
   createPubSubClient,
   defineJob,
+  loadJobs,
   createJob,
   dispatch,
   clear,

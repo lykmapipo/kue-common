@@ -8,12 +8,13 @@ process.env.NODE_ENV = 'test';
 const { expect } = require('chai');
 const {
   defineJob,
+  loadJobs,
   clear,
   stop
 } = require('../');
 
 
-describe('kue usecases', () => {
+describe('usecases', () => {
 
   before(done => clear(done));
 
@@ -39,6 +40,23 @@ describe('kue usecases', () => {
     const def = { type: 'resize' };
     const jobs = defineJob(def);
     expect(jobs.resize).not.to.exist;
+  });
+
+  it('should be able to load job definition', () => {
+    expect(loadJobs).to.exist;
+    expect(loadJobs).to.be.a('function');
+    expect(loadJobs.name).to.be.equal('loadJobs');
+    expect(loadJobs.length).to.be.equal(1);
+  });
+
+  it('should load job definitions with defaults', () => {
+    const jobs = loadJobs({ jobsPath: `${__dirname}/jobs` });
+    expect(jobs.compress).to.exist;
+    expect(jobs.compress.timeout).to.be.equal(5000);
+    expect(jobs.compress.concurrency).to.be.equal(10);
+    expect(jobs.compress.attempts).to.be.equal(3);
+    expect(jobs.compress.backoff).to.be.eql({ type: 'exponential' });
+    expect(jobs.compress.removeOnComplete).to.be.equal(true);
   });
 
   after(done => clear(done));

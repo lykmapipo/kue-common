@@ -39,7 +39,7 @@ const {
 } = require('../');
 
 
-describe('kue common', () => {
+describe('common', () => {
 
   beforeEach(done => clear(done));
   beforeEach(done => stop(done));
