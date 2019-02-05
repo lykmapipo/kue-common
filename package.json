@@ -41,20 +41,16 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-mocha-test": "^0.13.3",
     "jshint-stylish": "^2.2.1",
-    "kue": ">=0.11.6",
-    "mocha": "^5.2.0",
-    "redis": ">=2.8.0"
-  },
-  "peerDependencies": {
-    "kue": ">=0.11.6",
-    "redis": ">=2.8.0"
+    "mocha": "^5.2.0"
   },
   "dependencies": {
-    "@lykmapipo/common": ">=0.2.0",
+    "@lykmapipo/common": ">=0.6.0",
     "@lykmapipo/env": ">=0.3.3",
     "async": ">=2.6.1",
     "lodash": ">=4.17.11",
+    "kue": ">=0.11.6",
     "node-redis-warlock": ">=0.2.0",
+    "redis": ">=2.8.0",
     "require-all": ">=3.0.0"
   },
   "engines": {

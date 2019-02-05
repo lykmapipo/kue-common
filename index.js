@@ -338,7 +338,12 @@ const defineJob = (def) => {
  * @public
  * @example
  * const { loadJobs } = require('@lykmapipo/kue-common');
- * loadJobs({type: 'email', process: (job, done) => { ... }}); // => jobs
+ *
+ * // with default job path
+ * loadJobs(); // => { email: {...}, sms: {...} };
+ *
+ * // with custom jobs path
+ * loadJobs({ jobsPath: __dirname }); // => { email: {...}, sms: {...} };
  */
 const loadJobs = (optns) => {
   // merge with defaults
@@ -477,6 +482,7 @@ const dispatch = (optns, cb) => {
  * @function clear
  * @name clear
  * @description cleanup and reset current queue states.
+ * @param {Object} [optns] valid queue options
  * @param {Function} [cb] callback to invoke on success or failure.
  * @see {@link https://github.com/Automattic/kue#redis-connection-settings}
  * @author lally elias <lallyelias87@mail.com>
@@ -489,18 +495,20 @@ const dispatch = (optns, cb) => {
  * const { clear } = require('@lykmapipo/kue-common');
  * clear((error) => { ... });
  */
-const clear = (cb) => {
+const clear = (optns, cb) => {
   // normalize arguments
-  const done = _.isFunction(cb) ? cb : _.noop;
+  const options = withDefaults(_.isFunction(optns) ? {} : optns);
+  const done = _.isFunction(optns) ? optns : (cb || _.noop);
 
   // ensure queue
-  const queue = createQueue();
+  const queue = createQueue(options);
 
   // obtain redis client
-  const client = createClient();
+  const client = createClient(options);
 
   // obtain cleanup key pattern
-  const pattern = [queue.options.prefix, '*'].join('');
+  const { prefix = queue.options.prefix } = options;
+  const pattern = `${prefix}*`;
 
   const cleanup = (error, keys) => {
     // back-off in case of error
@@ -531,7 +539,7 @@ const clear = (cb) => {
  * @function start
  * @name start
  * @description load jobs definition and start to process
- * @param {Object} [options] valid start options
+ * @param {Object} [optns] valid start options
  * @return {Queue} valid kue.Queue instance.
  * @author lally elias <lallyelias87@mail.com>
  * @license MIT
@@ -560,6 +568,7 @@ const start = (optns) => {
       queue.setMaxListeners(currentMaxListener);
       queue.process(type, job.concurrency, job.process);
     };
+    // do registration
     _.forEach(jobs, perform);
   }
 
@@ -608,6 +617,7 @@ const stop = (optns, cb) => {
       // continue
       done(error, queue);
     };
+    // do shutdown
     queue.shutdown(timeout, afterShutdown);
   }
 
