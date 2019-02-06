@@ -1,3 +1,13 @@
+#### 0.2.0 (2019-02-06)
+
+##### New Features
+
+*  add options to clear to create redis client ([1f7286b7](https://github.com/lykmapipo/kue-common/commit/1f7286b788fe38c1e30127167ff049ad85f4e340))
+
+##### Refactors
+
+*  add options on clear and update usage docs ([faa6f0f0](https://github.com/lykmapipo/kue-common/commit/faa6f0f0368ac35a4d5713a1ac9d7a96c12348ee))
+
 #### 0.1.0 (2019-01-24)
 
 ##### Chores
