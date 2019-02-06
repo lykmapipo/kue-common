@@ -19,7 +19,52 @@ npm install --save @lykmapipo/kue-common
 
 ## Usage
 
-> WIP
+- Job Definition in `jobs/email.js`
+```js
+exports.type = 'email';
+exports.process = (job, done) => done(null, { success: true });
+```
+
+- Main Process e.g in `index.js`
+```js
+const { dispatch } = require('@lykmapipo/kue-common');
+dispatch({ type: 'email', data: { to: 'l@j.z' } });
+```
+
+- Worker Process(s) in `worker.js`
+```js
+const { start } = require('@lykmapipo/kue-common');
+start();
+```
+
+- Environment Variables in `.env`
+```js
+KUE_TIMEOUT=5000
+KUE_CONCURRENCY=10
+KUE_MAX_ATTEMPTS=3
+KUE_PRIORITY=normal
+KUE_JOB_EVENTS=false
+KUE_REMOVE_ON_COMPLETE=true
+KUE_REDIS_URL=redis://127.0.0.1:3000
+REDIS_URL=redis://127.0.0.1:3000
+```
+
+- Start Main Process
+```js
+$ node index.js
+```
+
+- Start Worker Process
+```js
+$ node worker.js
+```
+
+- Heroku Procfile
+```js
+web: NODE_ENV=production node index.js
+worker: NODE_ENV=production node worker.js
+
+```
 
 ## Test
 

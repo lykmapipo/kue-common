@@ -558,6 +558,8 @@ const start = (optns) => {
   // ensure worker queue is initialized
   const queue = createQueue(optns);
 
+  // TODO limit job type per worker({ types: ['email']})
+
   // start worker for processing jobs
   if (queue && !_.isEmpty(jobs)) {
     // register job worker fn
