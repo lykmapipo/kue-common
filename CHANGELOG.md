@@ -1,3 +1,9 @@
+#### 0.2.1 (2019-03-22)
+
+##### Chores
+
+*  force latest dependencies ([40dca936](https://github.com/lykmapipo/kue-common/commit/40dca93608137cddf64f85a0ec7eeffc1c779c17))
+
 #### 0.2.0 (2019-02-06)
 
 ##### New Features
