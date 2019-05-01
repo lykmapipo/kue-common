@@ -1,3 +1,11 @@
+#### 0.2.3 (2019-05-01)
+
+##### Chores
+
+* **.npmrc:**  prevent npm version to commit and tag version ([820751ac](https://github.com/lykmapipo/kue-common/commit/820751ac4b44314ca6fbbb16d841f340d3c50e85))
+* **deps:**  force latest version & audit fix ([9a157fce](https://github.com/lykmapipo/kue-common/commit/9a157fce192df11d51d3e371a1f0df3cd7fe8490))
+* **ci:**  force latest nodejs ([c351742c](https://github.com/lykmapipo/kue-common/commit/c351742c2badb866aea4f353fd90d932b396e3b3))
+
 #### 0.2.2 (2019-04-12)
 
 ##### Chores
