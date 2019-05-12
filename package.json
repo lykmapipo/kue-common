@@ -44,8 +44,8 @@
     "mocha": "^6.1.4"
   },
   "dependencies": {
-    "@lykmapipo/common": ">=0.17.1",
-    "@lykmapipo/env": ">=0.7.4",
+    "@lykmapipo/common": ">=0.17.4",
+    "@lykmapipo/env": ">=0.7.6",
     "async": ">=2.6.2",
     "lodash": ">=4.17.11",
     "kue": ">=0.11.6",
