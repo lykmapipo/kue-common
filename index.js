@@ -6,6 +6,8 @@ const _ = require('lodash');
 const requireAll = require('require-all');
 const { compact, mergeObjects } = require('@lykmapipo/common');
 const { getBoolean, getNumber, getString } = require('@lykmapipo/env');
+const basicAuth = require('basic-auth-connect');
+const express = require('express');
 const Queue = require('kue');
 
 
@@ -663,10 +665,13 @@ const listen = (optns, cb) => {
   const queue = createQueue(options);
 
   // obtain http(express) app
-  const app = queue.app || Queue.app;
+  const httpServer = queue.app || Queue.app;
+  const app = express();
 
   // configure and start http listening
-  const { httpPort } = options;
+  const { httpPort, httpUsername, httpPassword } = options;
+  app.use(basicAuth(httpUsername, httpPassword));
+  app.use(httpServer);
   app.listen(httpPort, error => done(error, mergeObjects(options)));
 
   // return queue and http(express) app
