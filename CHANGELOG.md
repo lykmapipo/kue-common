@@ -1,3 +1,26 @@
+#### 0.3.0 (2019-05-28)
+
+##### Chores
+
+* **example:**  add http server on sample ([38576700](https://github.com/lykmapipo/kue-common/commit/385767004369709e894cc0cae16f20ea31aab9d8))
+* **deps:**
+  *  run audit fixes ([824fe365](https://github.com/lykmapipo/kue-common/commit/824fe365fa49e8bee41f273691301b8a750591f1))
+  *  force latest version & audit fix ([dac7bf05](https://github.com/lykmapipo/kue-common/commit/dac7bf05adb35e0b455312ddd437791a6dbd789f))
+
+##### New Features
+
+*  ensure basic auth on exposed http server ([39f67a57](https://github.com/lykmapipo/kue-common/commit/39f67a57a2b1daa38c62b929cfb0c7e96b678fd1))
+*  expose listen to start kue internal http server ([269e4e4e](https://github.com/lykmapipo/kue-common/commit/269e4e4e40545705da94f279cca3dc91478e386b))
+*  add http config with defaults ([fd6d4d83](https://github.com/lykmapipo/kue-common/commit/fd6d4d837f8c70451059d542ba3fcea799c8a7eb))
+
+##### Other Changes
+
+*  improve jsdoc ([e05223c7](https://github.com/lykmapipo/kue-common/commit/e05223c7ce7c7bb7cc7066bcfc642b188457a562))
+
+##### Refactors
+
+*  pass http options on listen callback ([7105361b](https://github.com/lykmapipo/kue-common/commit/7105361b55630b56e073ae41a13c8ccd113e8977))
+
 #### 0.2.5 (2019-05-20)
 
 ##### Chores
