@@ -30,8 +30,9 @@ onJobFailed(error => {
 });
 
 // start http server
-listen(error => {
+listen((error, { httpPort }) => {
   console.log('http error:', error);
+  console.log(`Open: http://0.0.0.0:${httpPort}`);
 });
 
 // dispatch works

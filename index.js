@@ -4,7 +4,7 @@
 /* dependencies */
 const _ = require('lodash');
 const requireAll = require('require-all');
-const { compact } = require('@lykmapipo/common');
+const { compact, mergeObjects } = require('@lykmapipo/common');
 const { getBoolean, getNumber, getString } = require('@lykmapipo/env');
 const Queue = require('kue');
 
@@ -667,7 +667,7 @@ const listen = (optns, cb) => {
 
   // configure and start http listening
   const { httpPort } = options;
-  app.listen(httpPort, done);
+  app.listen(httpPort, error => done(error, mergeObjects(options)));
 
   // return queue and http(express) app
   return { queue, app };
