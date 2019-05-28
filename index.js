@@ -636,7 +636,7 @@ const stop = (optns, cb) => {
 /**
  * @function listen
  * @name listen
- * @description start internal kue http server
+ * @description start kue internal http(express) server
  * @param {Object} [opts] valid queue creation options.
  * @param {Function} [cb] callback to invoke on success or failure.
  * @return {Object} result kue instance and express app
