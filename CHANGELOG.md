@@ -1,3 +1,9 @@
+#### 0.3.1 (2019-05-28)
+
+##### Bug Fixes
+
+*  use mergeObjects to remove falsey values ([b64f478b](https://github.com/lykmapipo/kue-common/commit/b64f478bbb40e623e08294f4d5202aaacb5c170d))
+
 #### 0.3.0 (2019-05-28)
 
 ##### Chores
