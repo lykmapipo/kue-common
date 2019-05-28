@@ -41,7 +41,8 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-mocha-test": "^0.13.3",
     "jshint-stylish": "^2.2.1",
-    "mocha": "^6.1.4"
+    "mocha": "^6.1.4",
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "@lykmapipo/common": ">=0.17.5",

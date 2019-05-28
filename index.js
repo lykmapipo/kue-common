@@ -634,6 +634,47 @@ const stop = (optns, cb) => {
 
 
 /**
+ * @function listen
+ * @name listen
+ * @description start internal kue http server
+ * @param {Object} [opts] valid queue creation options.
+ * @param {Function} [cb] callback to invoke on success or failure.
+ * @return {Object} result kue instance and express app
+ * @return {Queue} result.queue valid kue.Queue instance.
+ * @return {Object} result.app valid express app instance.
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.3.0
+ * @version 0.1.0
+ * @static
+ * @public
+ * @example
+ * const { listen } = require('@lykmapipo/kue-common');
+ * listen((error) => { ... });
+ * //=> http://0.0.0.0:5000
+ *
+ */
+const listen = (optns, cb) => {
+  // normalize arguments
+  const options = withDefaults(_.isFunction(optns) ? {} : optns);
+  const done = _.isFunction(optns) ? optns : (cb || _.noop);
+
+  // ensure queue is initialized
+  const queue = createQueue(options);
+
+  // obtain http(express) app
+  const app = queue.app || Queue.app;
+
+  // configure and start http listening
+  const { httpPort } = options;
+  app.listen(httpPort, done);
+
+  // return queue and http(express) app
+  return { queue, app };
+};
+
+
+/**
  * @function onJobEnqueue
  * @name onJobEnqueue
  * @description register queue `job enqueue` events listener.
@@ -802,6 +843,7 @@ module.exports = exports = {
   clear,
   start,
   stop,
+  listen,
   onJobEnqueue,
   onJobStart,
   onJobPromotion,

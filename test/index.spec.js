@@ -6,6 +6,7 @@ process.env.NODE_ENV = 'test';
 
 /* dependencies */
 const { expect } = require('chai');
+const request = require('supertest');
 const {
   PRIORITY_LOW,
   PRIORITY_NORMAL,
@@ -37,7 +38,8 @@ const {
   createJob,
   dispatch,
   clear,
-  stop
+  stop,
+  listen
 } = require('../');
 
 
@@ -302,6 +304,21 @@ describe('common', () => {
     expect(jobs.compress.attempts).to.be.equal(3);
     expect(jobs.compress.backoff).to.be.eql({ type: 'exponential' });
     expect(jobs.compress.removeOnComplete).to.be.equal(true);
+  });
+
+  it('should listen to http request', done => {
+    const { httpUsername, httpPassword } = withDefaults();
+    const { app } = listen();
+    request(app)
+      .get('/')
+      .auth(httpUsername, httpPassword)
+      .expect('Content-Type', /html/)
+      .expect(200)
+      .end((error, response) => {
+        expect(error).to.not.exist;
+        expect(response).to.exist;
+        done(error, response);
+      });
   });
 
   after(done => clear(done));
