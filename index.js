@@ -140,7 +140,7 @@ const reset = () => {
  */
 const withDefaults = (optns) => {
   // merge defaults
-  let options = _.merge({}, {
+  let options = mergeObjects({
     timeout: getNumber('KUE_TIMEOUT', 5000),
     concurrency: getNumber('KUE_CONCURRENCY', 10),
     attempts: getNumber('KUE_MAX_ATTEMPTS', 3),
@@ -473,7 +473,7 @@ const dispatch = (optns, cb) => {
   const { type } = options;
 
   // ensure queue can process give job type
-  const definition = _.merge({}, jobs[type], options); // TODO no job def?
+  const definition = mergeObjects(jobs[type], options); // TODO no job def?
 
   // create job
   const job = createJob(definition);
