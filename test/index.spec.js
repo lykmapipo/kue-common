@@ -89,6 +89,9 @@ describe('common', () => {
     expect(options.backoff).to.be.eql({ type: 'exponential' });
     expect(options.removeOnComplete).to.be.equal(true);
     expect(options.redis).to.be.eql({ port: 6379, host: '127.0.0.1' });
+    expect(options.httpPort).to.be.equal(5000);
+    expect(options.httpUsername).to.be.equal('kue');
+    expect(options.httpPassword).to.be.equal('kue');
   });
 
   it('should be able to create redis client with default options', () => {

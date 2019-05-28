@@ -147,6 +147,9 @@ const withDefaults = (optns) => {
     jobEvents: getBoolean('KUE_JOB_EVENTS', false),
     removeOnComplete: getBoolean('KUE_REMOVE_ON_COMPLETE', true),
     redis: redisUrl(),
+    httpPort: getNumber('KUE_HTTP_PORT', 5000),
+    httpUsername: getString('KUE_HTTP_USERNAME', 'kue'),
+    httpPassword: getString('KUE_HTTP_PASSWORD', 'kue'),
   }, optns);
 
   // compact and return
