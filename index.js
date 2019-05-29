@@ -74,6 +74,7 @@ const REMOVE = 'remove';
  * queue.on(JOB_COMPLETE, result => { ... });
  */
 const JOB_ENQUEUE = 'job enqueue';
+const JOB_QUEUED = 'job queued';
 const JOB_START = 'job start';
 const JOB_PROMOTION = 'job promotion';
 const JOB_PROGRESS = 'job progress';
@@ -695,6 +696,21 @@ const onJobEnqueue = cb => queue && queue.on(JOB_ENQUEUE, cb);
 
 
 /**
+ * @function onJobQueued
+ * @name onJobQueued
+ * @description register queue `job queued` events listener.
+ * @param {Function} cb a valid event listener
+ * @author lally elias <lallyelias87@mail.com>
+ * @license MIT
+ * @since 0.1.0
+ * @version 0.1.0
+ * @static
+ * @public
+ */
+const onJobQueued = cb => queue && queue.on(JOB_QUEUED, cb);
+
+
+/**
  * @function onJobStart
  * @name onJobStart
  * @description register queue `job start` events listener.
@@ -850,6 +866,7 @@ module.exports = exports = {
   stop,
   listen,
   onJobEnqueue,
+  onJobQueued,
   onJobStart,
   onJobPromotion,
   onJobProgress,
