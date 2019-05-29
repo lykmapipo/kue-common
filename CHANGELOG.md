@@ -1,3 +1,17 @@
+#### 0.3.2 (2019-05-29)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([d3b1e99d](https://github.com/lykmapipo/kue-common/commit/d3b1e99d87913505aa5054acb2562718ca3a728e))
+
+##### New Features
+
+*  add onJobQueued event handler helper ([9cf92a34](https://github.com/lykmapipo/kue-common/commit/9cf92a34749a7d0cb1188578e2f3624ad7c4a22e))
+
+##### Tests
+
+*  improve queue job events handler helpers specs ([e372ba80](https://github.com/lykmapipo/kue-common/commit/e372ba807f7434754118894b8a4ed6d01a24bafd))
+
 #### 0.3.1 (2019-05-28)
 
 ##### Bug Fixes
