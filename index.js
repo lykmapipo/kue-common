@@ -411,7 +411,7 @@ const createJob = (optns, cb) => {
   const queue = createQueue(options);
 
   // prepare job creation options
-  let { type, priority, attempts, backoff } = options;
+  let { type, priority, attempts, backoff, delay } = options;
   let { removeOnComplete, data = {} } = options;
   type = (data.type || type);
   priority = (data.priority || priority);
@@ -425,6 +425,11 @@ const createJob = (optns, cb) => {
   job.backoff(backoff);
   job.priority(priority);
   job.removeOnComplete(removeOnComplete);
+
+  // set delay
+  if (delay) {
+    job.delay(delay);
+  }
 
   // save and return job
   if (_.isFunction(done)) {
