@@ -1,3 +1,9 @@
+#### 0.3.7 (2019-07-06)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([fadd5100](https://github.com/lykmapipo/kue-common/commit/fadd5100d3ac400d07e362fe99f0e2ef52af5aea))
+
 #### 0.3.6 (2019-06-29)
 
 ##### Chores
