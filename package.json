@@ -1,6 +1,6 @@
 {
   "name": "@lykmapipo/kue-common",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "description": "Re-usable helpers for kue.",
   "main": "index.js",
   "scripts": {
