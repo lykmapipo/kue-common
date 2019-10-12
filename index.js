@@ -139,7 +139,7 @@ const reset = () => {
  * const redis = (process.env.REDIS_URL || { port: 6379, host: '127.0.0.1' });
  * withDefaults({ redis }) // => { redis: ...}
  */
-const withDefaults = (optns) => {
+const withDefaults = optns => {
   // merge defaults
   let options = mergeObjects({
     timeout: getNumber('KUE_TIMEOUT', 5000),
@@ -148,6 +148,7 @@ const withDefaults = (optns) => {
     priority: getString('KUE_PRIORITY', 'normal'),
     backoff: ({ type: 'exponential' }),
     jobEvents: getBoolean('KUE_JOB_EVENTS', false),
+    jobsPath: getString('KUE_JOBS_PATH', `${process.cwd()}/jobs`),
     removeOnComplete: getBoolean('KUE_REMOVE_ON_COMPLETE', true),
     redis: redisUrl(),
     httpPort: getNumber('KUE_HTTP_PORT', 5000),
@@ -184,7 +185,7 @@ const withDefaults = (optns) => {
  * const options = { redis: 'redis://example.com:1234?redis_option=value' };
  * const queue = createQueue(options);
  */
-const createQueue = (optns) => {
+const createQueue = optns => {
   // prepare options
   const options = withDefaults(optns);
 
@@ -198,6 +199,7 @@ const createQueue = (optns) => {
   Queue.prototype.options = options;
 
   // instatiate Queue
+  // TODO: use {redis: { createClientFactory: fn(optns)}}
   queue = Queue.createQueue(options);
 
   // return queue
@@ -227,7 +229,7 @@ const createQueue = (optns) => {
  * const options = { redis: 'redis://example.com:1234?redis_option=value' };
  * const client = createClient(options);
  */
-const createClient = (optns) => {
+const createClient = optns => {
   // ensure single redis client per Queue per process
   if (!client) {
     client = createQueue(optns).client;
@@ -261,7 +263,7 @@ const createClient = (optns) => {
  * const options = { redis: 'redis://example.com:1234?redis_option=value' };
  * const pubsub = createPubSub(options);
  */
-const createPubSubClient = (optns) => {
+const createPubSubClient = optns => {
   // ensure single redis pubsub client per Queue per process
   if (!pubsub) {
     const queue = createQueue(optns);
@@ -286,7 +288,7 @@ const createPubSubClient = (optns) => {
  * @version 0.1.0
  * @private
  */
-const isJobDefinition = (job) => {
+const isJobDefinition = job => {
   const hasType = (job && !_.isEmpty(job.type));
   const hasHandler = (job && _.isFunction(job.process));
   const isValid = (hasType && hasHandler);
@@ -313,7 +315,7 @@ const isJobDefinition = (job) => {
  * const { defineJob } = require('@lykmapipo/kue-common');
  * defineJob({type: 'email', process: (job, done) => { ... }}); // => jobs
  */
-const defineJob = (def) => {
+const defineJob = def => {
   // merge with defaults
   const job = withDefaults(def);
 
@@ -351,13 +353,13 @@ const defineJob = (def) => {
  * // with custom jobs path
  * loadJobs({ jobsPath: __dirname }); // => { email: {...}, sms: {...} };
  */
-const loadJobs = (optns) => {
+const loadJobs = optns => {
   // merge with defaults
   const options = withDefaults(optns);
 
   try {
     // load jobs definitions
-    const { jobsPath = `${process.cwd()}/jobs` } = options;
+    const { jobsPath } = options;
     const defs = requireAll(jobsPath);
 
     // collect valid job definitions
@@ -532,9 +534,7 @@ const clear = (optns, cb) => {
       const multi = client.multi();
 
       // queue delete commands
-      _.forEach(keys, function (key) {
-        multi.del(key);
-      });
+      _.forEach(keys, key => multi.del(key));
 
       // execute delete command
       multi.exec(done);
@@ -562,14 +562,16 @@ const clear = (optns, cb) => {
  * const { start } = require('@lykmapipo/kue-common');
  * start();
  */
-const start = (optns) => {
+const start = optns => {
+  //limit job types per worker if provided
+  const types = compact(optns && optns.types ? [].concat(optns.types) : []);
+
   // load jobs definition
-  const jobs = loadJobs(optns);
+  let jobs = loadJobs(optns);
+  jobs = _.isEmpty(types) ? jobs : _.pick(jobs, ...types);
 
   // ensure worker queue is initialized
   const queue = createQueue(optns);
-
-  // TODO limit job type per worker({ types: ['email']})
 
   // start worker for processing jobs
   if (queue && !_.isEmpty(jobs)) {

@@ -4,7 +4,7 @@
   "description": "Re-usable helpers for kue.",
   "main": "index.js",
   "scripts": {
-    "test": "grunt test"
+    "test": "NODE_ENV=test grunt test"
   },
   "repository": {
     "type": "git",
