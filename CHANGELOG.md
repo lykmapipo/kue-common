@@ -1,3 +1,19 @@
+#### 0.4.0 (2019-10-12)
+
+##### Chores
+
+*  rename example to examples ([6bf20eaa](https://github.com/lykmapipo/kue-common/commit/6bf20eaa564ea8d09d3c5a917d7ba44f8cfe2f28))
+* **example:**  add job remove queue listener ([1b35559d](https://github.com/lykmapipo/kue-common/commit/1b35559d668669d23bc0d4610c7d695c7fccc97e))
+* **conf:**  update .npmrc ([6babee9c](https://github.com/lykmapipo/kue-common/commit/6babee9cf428c74891666b0e38cc6b9fd742b2be))
+
+##### Continuous Integration
+
+* **travis:**  use latest node ([35bef326](https://github.com/lykmapipo/kue-common/commit/35bef32618258b4ad58ea8884c43510d292c994f))
+
+##### New Features
+
+*  allow processing specific jobs per worker ([08c95ad1](https://github.com/lykmapipo/kue-common/commit/08c95ad17b8d7f577e6292649ca6a83b09669865))
+
 #### 0.3.13 (2019-10-10)
 
 ##### Chores
