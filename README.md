@@ -1,7 +1,14 @@
 # kue-common
 
 [![Build Status](https://travis-ci.org/lykmapipo/kue-common.svg?branch=master)](https://travis-ci.org/lykmapipo/kue-common)
-[![Dependencies Status](https://david-dm.org/lykmapipo/kue-common.svg?style=flat-square)](https://david-dm.org/lykmapipo/kue-common)
+[![Dependencies Status](https://david-dm.org/lykmapipo/kue-common.svg)](https://david-dm.org/lykmapipo/kue-common)
+[![Coverage Status](https://coveralls.io/repos/github/lykmapipo/kue-common/badge.svg?branch=master)](https://coveralls.io/github/lykmapipo/kue-common?branch=master)
+[![GitHub License](https://img.shields.io/github/license/lykmapipo/kue-common)](https://github.com/lykmapipo/kue-common/blob/master/LICENSE) 
+
+[![Commitizen Friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![Code Style](https://badgen.net/badge/code%20style/airbnb/ff5a5f?icon=airbnb)](https://github.com/airbnb/javascript)
+[![npm version](https://img.shields.io/npm/v/@lykmapipo/kue-common)](https://www.npmjs.com/package/@lykmapipo/kue-common)
 
 Re-usable helpers for [kue](https://github.com/Automattic/kue).
 

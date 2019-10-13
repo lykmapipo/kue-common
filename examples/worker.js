@@ -9,7 +9,7 @@ const {
   onJobFailed,
   onJobRemove,
   dispatch
-} = require('../');
+} = require('../lib');
 
 // start queue
 start();

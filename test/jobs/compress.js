@@ -1,7 +1,2 @@
-'use strict';
-
-
-module.exports = exports = {
-  type: 'compress',
-  process: (job, done) => done()
-};
+export const type = 'compress';
+export const perform = (job, done) => done();

@@ -2,13 +2,23 @@
   "name": "@lykmapipo/kue-common",
   "version": "0.4.0",
   "description": "Re-usable helpers for kue.",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "scripts": {
-    "test": "NODE_ENV=test grunt test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lykmapipo/kue-common.git"
+    "clean": "rimraf lib dist es umd logs",
+    "prebuild": "npm test && npm run clean",
+    "build": "rollup -c",
+    "lint": "eslint --fix --ext .js src/ test/ rollup.config.js",
+    "pretest": "npm run lint",
+    "test": "NODE_ENV=test nyc --reporter=html --reporter=text mocha --exit --timeout=8000 --require @babel/register test/**/*.spec.js",
+    "test:unit": "NODE_ENV=test npm run pretest && NODE_ENV=test mocha --exit --timeout=8000 --require @babel/register test/unit/**/*.spec.js",
+    "test:integration": "NODE_ENV=test npm run pretest && NODE_ENV=test mocha --exit --timeout=8000 --require @babel/register test/integration/**/*.spec.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "docs": "doxdox 'lib/**/*.js' -p package.json -l markdown -o DOCUMENTATION.md",
+    "cmt": "git add -A && git-cz",
+    "changelog": "changelog",
+    "chore:deps": "ncu -u && npm install --save",
+    "lint:config": "eslint --print-config rollup.config.js"
   },
   "keywords": [
     "lykmapipo",
@@ -21,6 +31,15 @@
     "worker",
     "queue"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lykmapipo/kue-common.git"
+  },
+  "author": {
+    "name": "lykmapipo",
+    "email": "lallyelias87@gmail.com",
+    "url": "https://github.com/lykmapipo"
+  },
   "contributors": [
     {
       "name": "lykmapipo",
@@ -30,23 +49,46 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lykmapipo/kue-common/issues",
-    "email": "lallyelias87@gmail.com"
+    "url": "https://github.com/lykmapipo/kue-common/issues"
   },
-  "homepage": "https://github.com/lykmapipo/kue-common",
+  "homepage": "https://github.com/lykmapipo/kue-common#readme",
   "devDependencies": {
+    "@babel/cli": "^7.6.4",
+    "@babel/core": "^7.6.4",
+    "@babel/node": "^7.6.3",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/register": "^7.6.2",
+    "@commitlint/cli": "^8.2.0",
+    "@commitlint/config-conventional": "^8.2.0",
+    "@commitlint/travis-cli": "^8.2.0",
+    "@lykmapipo/test-helpers": "^0.4.6",
     "chai": "^4.2.0",
-    "extend": "^3.0.2",
-    "grunt": "^1.0.4",
-    "grunt-contrib-jshint": "^2.1.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-mocha-test": "^0.13.3",
+    "commitizen": "^4.0.3",
+    "coveralls": "^3.0.7",
+    "cz-conventional-changelog": "^3.0.2",
+    "doxdox": "^3.0.0",
+    "eslint": "^6.5.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.4.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsdoc": "^15.11.0",
+    "eslint-plugin-mocha": "^6.1.1",
+    "eslint-plugin-prettier": "^3.1.1",
+    "generate-changelog": "^1.8.0",
     "handlebars": "^4.4.3",
-    "jshint-stylish": "^2.2.1",
+    "husky": "^3.0.9",
+    "lint-staged": "^9.4.2",
+    "lodash.template": "^4.5.0",
     "mocha": "^6.2.1",
+    "npm-check-updates": "^3.1.24",
+    "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
+    "rimraf": "^3.0.0",
+    "rollup": "^1.23.1",
     "shelljs": "^0.8.3",
     "supertest": "^4.0.2"
   },
+  "peerDependencies": {},
   "dependencies": {
     "@lykmapipo/common": ">=0.28.3",
     "@lykmapipo/env": ">=0.14.6",
@@ -60,7 +102,29 @@
     "require-all": ">=3.0.0"
   },
   "engines": {
-    "node": ">=8.11.1",
-    "npm": ">=5.6.0"
+    "node": ">=12.4.0",
+    "npm": ">=6.9.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "npm run lint",
+      "git add -A"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   }
 }

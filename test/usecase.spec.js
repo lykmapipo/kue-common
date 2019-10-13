@@ -1,12 +1,5 @@
-'use strict';
-
-
-process.env.NODE_ENV = 'test';
-
-
-/* dependencies */
-const { expect } = require('chai');
-const {
+import { expect } from '@lykmapipo/test-helpers';
+import {
   defineJob,
   dispatch,
   onJobEnqueue,
@@ -17,12 +10,10 @@ const {
   onJobFailed,
   start,
   clear,
-  stop
-} = require('../');
-
+  stop,
+} from '../src';
 
 describe('usecases', () => {
-
   beforeEach(done => clear(done));
   beforeEach(done => stop(done));
 
@@ -32,7 +23,7 @@ describe('usecases', () => {
     const jobs = defineJob({
       type: 'email',
       delay: 10,
-      process: (job, done) => done(null, results)
+      process: (job, next) => next(null, results),
     });
     expect(jobs.email).to.exist;
 
@@ -53,7 +44,7 @@ describe('usecases', () => {
       expect(type).to.exist;
     });
 
-    onJobPromotion((id) => {
+    onJobPromotion(id => {
       expect(id).to.exist;
     });
 
@@ -64,12 +55,12 @@ describe('usecases', () => {
       done();
     });
 
-    onJobFailed((error) => {
+    onJobFailed(error => {
       expect(error).to.not.exist;
       done(error);
     });
 
-    dispatch({ type: 'email', data: data });
+    dispatch({ type: 'email', data });
   });
 
   after(done => clear(done));

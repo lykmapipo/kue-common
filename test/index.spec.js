@@ -1,13 +1,6 @@
-'use strict';
-
-
-process.env.NODE_ENV = 'test';
-
-
-/* dependencies */
-const { expect } = require('chai');
-const request = require('supertest');
-const {
+import { expect } from '@lykmapipo/test-helpers';
+import request from 'supertest';
+import {
   PRIORITY_LOW,
   PRIORITY_NORMAL,
   PRIORITY_MEDIUM,
@@ -39,12 +32,10 @@ const {
   dispatch,
   clear,
   stop,
-  listen
-} = require('../');
-
+  listen,
+} from '../src';
 
 describe('common', () => {
-
   beforeEach(done => clear(done));
   beforeEach(done => stop(done));
 
@@ -167,7 +158,7 @@ describe('common', () => {
       timeout: 8000,
       concurrency: 5,
       attempts: 5,
-      redis: 'redis://localhost:6379'
+      redis: 'redis://localhost:6379',
     };
 
     const queue = createQueue(options);
@@ -177,8 +168,12 @@ describe('common', () => {
     expect(queue.options.attempts).to.be.equal(options.attempts);
     expect(queue.options.backoff).to.be.eql({ type: 'exponential' });
     expect(queue.options.removeOnComplete).to.be.equal(true);
-    expect(queue.options.redis)
-      .to.be.eql({ port: '6379', db: 0, host: 'localhost', options: {} });
+    expect(queue.options.redis).to.be.eql({
+      port: '6379',
+      db: 0,
+      host: 'localhost',
+      options: {},
+    });
   });
 
   it('should be able to create job with default options', () => {
@@ -189,17 +184,17 @@ describe('common', () => {
 
     const options = {
       type: 'email',
-      data: { to: 'tj@learnboost.com' }
+      data: { to: 'tj@learnboost.com' },
     };
     const job = createJob(options);
     expect(job).to.exist;
     expect(job.type).to.be.equal(options.type);
-    /*jshint camelcase:false */
+    /* jshint camelcase:false */
     expect(job._max_attempts).to.be.equal(3);
     expect(job._priority).to.be.equal(0);
     expect(job._backoff).to.be.eql({ type: 'exponential' });
     expect(job._removeOnComplete).to.be.true;
-    /*jshint camelcase:true */
+    /* jshint camelcase:true */
     expect(job.data).to.be.eql(options.data);
   });
 
@@ -208,18 +203,18 @@ describe('common', () => {
       type: 'email',
       data: { to: 'tj@learnboost.com' },
       attempts: 4,
-      priority: 'high'
+      priority: 'high',
     };
 
     const job = createJob(options);
     expect(job).to.exist;
     expect(job.type).to.be.equal(options.type);
-    /*jshint camelcase:false */
+    /* jshint camelcase:false */
     expect(job._max_attempts).to.be.equal(4);
     expect(job._priority).to.be.equal(-10);
     expect(job._backoff).to.be.eql({ type: 'exponential' });
     expect(job._removeOnComplete).to.be.true;
-    /*jshint camelcase:true */
+    /* jshint camelcase:true */
     expect(job.data).to.be.eql(options.data);
   });
 
@@ -231,17 +226,17 @@ describe('common', () => {
 
     const options = {
       type: 'email',
-      data: { to: 'tj@learnboost.com' }
+      data: { to: 'tj@learnboost.com' },
     };
     const job = dispatch(options);
     expect(job).to.exist;
     expect(job.type).to.be.equal(options.type);
-    /*jshint camelcase:false */
+    /* jshint camelcase:false */
     expect(job._max_attempts).to.be.equal(3);
     expect(job._priority).to.be.equal(0);
     expect(job._backoff).to.be.eql({ type: 'exponential' });
     expect(job._removeOnComplete).to.be.true;
-    /*jshint camelcase:true */
+    /* jshint camelcase:true */
     expect(job.data).to.be.eql(options.data);
   });
 
@@ -250,18 +245,18 @@ describe('common', () => {
       type: 'email',
       data: { to: 'tj@learnboost.com' },
       attempts: 4,
-      priority: 'high'
+      priority: 'high',
     };
 
     const job = dispatch(options);
     expect(job).to.exist;
     expect(job.type).to.be.equal(options.type);
-    /*jshint camelcase:false */
+    /* jshint camelcase:false */
     expect(job._max_attempts).to.be.equal(4);
     expect(job._priority).to.be.equal(-10);
     expect(job._backoff).to.be.eql({ type: 'exponential' });
     expect(job._removeOnComplete).to.be.true;
-    /*jshint camelcase:true */
+    /* jshint camelcase:true */
     expect(job.data).to.be.eql(options.data);
   });
 
@@ -323,5 +318,4 @@ describe('common', () => {
 
   after(done => clear(done));
   after(done => stop(done));
-
 });
