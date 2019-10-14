@@ -404,6 +404,9 @@ export const createJob = (optns, cb) => {
   backoff = data.backoff || backoff;
   removeOnComplete = data.removeOnComplete || removeOnComplete;
 
+  // ensure job title
+  data.title = data.title || _.startCase(type);
+
   // create job
   const job = queue.createJob(type, data); // TODO: save optns?
   job.attempts(attempts);
