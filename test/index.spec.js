@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { expect } from '@lykmapipo/test-helpers';
 import request from 'supertest';
 import {
@@ -195,7 +196,7 @@ describe('common', () => {
     expect(job._backoff).to.be.eql({ type: 'exponential' });
     expect(job._removeOnComplete).to.be.true;
     /* jshint camelcase:true */
-    expect(job.data).to.be.eql(options.data);
+    expect(_.omit(job.data, 'title')).to.be.eql(options.data);
   });
 
   it('should be able to create job with custom options', () => {
@@ -215,7 +216,7 @@ describe('common', () => {
     expect(job._backoff).to.be.eql({ type: 'exponential' });
     expect(job._removeOnComplete).to.be.true;
     /* jshint camelcase:true */
-    expect(job.data).to.be.eql(options.data);
+    expect(_.omit(job.data, 'title')).to.be.eql(options.data);
   });
 
   it('should be able to dispatch job with default options', () => {
@@ -237,7 +238,7 @@ describe('common', () => {
     expect(job._backoff).to.be.eql({ type: 'exponential' });
     expect(job._removeOnComplete).to.be.true;
     /* jshint camelcase:true */
-    expect(job.data).to.be.eql(options.data);
+    expect(_.omit(job.data, 'title')).to.be.eql(options.data);
   });
 
   it('should be able to dispatch job with custom options', () => {
@@ -257,7 +258,7 @@ describe('common', () => {
     expect(job._backoff).to.be.eql({ type: 'exponential' });
     expect(job._removeOnComplete).to.be.true;
     /* jshint camelcase:true */
-    expect(job.data).to.be.eql(options.data);
+    expect(_.omit(job.data, 'title')).to.be.eql(options.data);
   });
 
   it('should be able to register a job definition', () => {
