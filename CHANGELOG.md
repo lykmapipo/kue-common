@@ -1,3 +1,17 @@
+#### 0.5.1 (2019-10-14)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([88190de7](https://github.com/lykmapipo/kue-common/commit/88190de71a78e162cd98f8e563bf760c28bcdfc9))
+
+##### Bug Fixes
+
+*  ensure job title ([440a5a53](https://github.com/lykmapipo/kue-common/commit/440a5a53bf2d2d14dce25bfe75c7183b089e0e76))
+
+##### Tests
+
+*  ensure job title ([aafca8f7](https://github.com/lykmapipo/kue-common/commit/aafca8f711ee574791b293a6252b0af584155566))
+
 #### 0.5.0 (2019-10-14)
 
 ##### Chores
