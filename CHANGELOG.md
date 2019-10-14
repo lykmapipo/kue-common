@@ -1,3 +1,31 @@
+#### 0.5.0 (2019-10-14)
+
+##### Chores
+
+* **ci:**
+  *  update travis configs ([828dd6de](https://github.com/lykmapipo/kue-common/commit/828dd6dec1b7c2b60ce3b65c5e03baf4f82cbf2e))
+  *  update travis configs ([7d9a0e5a](https://github.com/lykmapipo/kue-common/commit/7d9a0e5a9a62e29510da084a245e46ae67bc4e65))
+* **config:**
+  *  update prettier configs ([7c290587](https://github.com/lykmapipo/kue-common/commit/7c290587cda3d621a37492b5c74ebdf0e2f08a36))
+  *  update npm files ([c152a1fc](https://github.com/lykmapipo/kue-common/commit/c152a1fcb0087b0a88b99d091980f5cf2e9f37d8))
+  *  update git files ([f4c566cf](https://github.com/lykmapipo/kue-common/commit/f4c566cf75ff8501f22399d1c7f4d79b692256f2))
+  *  update eslint configs ([1d1ef090](https://github.com/lykmapipo/kue-common/commit/1d1ef090f6d12ec5e23ba0ba74add890cf730f2a))
+  *  update editor configs ([a44ff9d1](https://github.com/lykmapipo/kue-common/commit/a44ff9d11366d1b2552177da74b363d9008ae434))
+  *  update babel configs ([2ca3b26a](https://github.com/lykmapipo/kue-common/commit/2ca3b26ac0fa1c64038ae65025329372d0f7b8bc))
+
+##### Documentation Changes
+
+*  add documentation directory ([f1b4ff19](https://github.com/lykmapipo/kue-common/commit/f1b4ff19a6dcc773ef33ac34928cb6a703820297))
+*  update usage ([0271432c](https://github.com/lykmapipo/kue-common/commit/0271432cc9e49f29f397826ec1cc1c211e073b46))
+
+##### Bug Fixes
+
+* **security:**  update to remove  vulnerability ([c8b7bf64](https://github.com/lykmapipo/kue-common/commit/c8b7bf641cd549cc2475cdd52a531cb9f4b657b0))
+
+##### Refactors
+
+*  migrate to iso lib format ([05fb0a1d](https://github.com/lykmapipo/kue-common/commit/05fb0a1daaa79c269821d7cbb4573485f89550d6))
+
 #### 0.4.0 (2019-10-12)
 
 ##### Chores

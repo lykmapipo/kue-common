@@ -15,8 +15,8 @@ Re-usable helpers for [kue](https://github.com/Automattic/kue).
 
 ## Requirements
 
-- [NodeJS v8.11.1+](https://nodejs.org)
-- [npm v5.6.0+](https://www.npmjs.com/)
+- [NodeJS v12+](https://nodejs.org)
+- [npm v6+](https://www.npmjs.com/)
 
 ## Installation
 

@@ -1,6 +1,5 @@
 'use strict';
 
-/* dependencies */
 const {
   listen,
   start,
@@ -8,7 +7,7 @@ const {
   onJobComplete,
   onJobFailed,
   onJobRemove,
-  dispatch
+  dispatch,
 } = require('../lib');
 
 // start queue
@@ -45,4 +44,4 @@ listen((error, { httpPort }) => {
 // dispatch works
 setInterval(() => {
   dispatch({ type: 'email', data: { to: 'l@j.z' } });
-}, 2000)
+}, 2000);
