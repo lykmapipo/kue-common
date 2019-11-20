@@ -1,3 +1,17 @@
+#### 0.6.0 (2019-11-20)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([9f72edaf](https://github.com/lykmapipo/kue-common/commit/9f72edaf350cf4c2530f593fe90f339c7ed99dad))
+
+##### Documentation Changes
+
+*  update possible env config ([8f304909](https://github.com/lykmapipo/kue-common/commit/8f3049091d468fe4f4a27a6b1062c9359f571033))
+
+##### New Features
+
+* **http:**  start http if enabled ([07e586f4](https://github.com/lykmapipo/kue-common/commit/07e586f400edbad189ec7acf5b76e13eae390834))
+
 #### 0.5.2 (2019-10-22)
 
 ##### Chores
