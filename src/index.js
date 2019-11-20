@@ -143,6 +143,7 @@ export const withDefaults = optns => {
       httpPort: getNumber('KUE_HTTP_PORT', 5000),
       httpUsername: getString('KUE_HTTP_USERNAME', 'kue'),
       httpPassword: getString('KUE_HTTP_PASSWORD', 'kue'),
+      httpEnabled: getBoolean('KUE_HTTP_ENABLED', true),
     },
     optns
   );
@@ -651,10 +652,14 @@ export const listen = (optns, cb) => {
   const app = express();
 
   // configure and start http listening
-  const { httpPort, httpUsername, httpPassword } = options;
+  const { httpPort, httpUsername, httpPassword, httpEnabled } = options;
   app.use(basicAuth(httpUsername, httpPassword));
   app.use(httpServer);
-  app.listen(httpPort, error => done(error, mergeObjects(options)));
+  if (httpEnabled) {
+    app.listen(httpPort, error => done(error, mergeObjects(options)));
+  } else {
+    done(null, mergeObjects(options));
+  }
 
   // return queue and http(express) app
   return { queue, app };
