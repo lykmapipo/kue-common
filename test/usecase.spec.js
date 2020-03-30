@@ -14,10 +14,10 @@ import {
 } from '../src';
 
 describe('usecases', () => {
-  beforeEach(done => clear(done));
-  beforeEach(done => stop(done));
+  beforeEach((done) => clear(done));
+  beforeEach((done) => stop(done));
 
-  it('should be able to handle dispatched job', done => {
+  it('should be able to handle dispatched job', (done) => {
     const results = { success: true };
     const data = { to: 'l@j.z' };
     const jobs = defineJob({
@@ -34,7 +34,7 @@ describe('usecases', () => {
       expect(type).to.exist;
     });
 
-    onJobQueued(job => {
+    onJobQueued((job) => {
       expect(job.id).to.exist;
       expect(job.type).to.exist;
     });
@@ -44,7 +44,7 @@ describe('usecases', () => {
       expect(type).to.exist;
     });
 
-    onJobPromotion(id => {
+    onJobPromotion((id) => {
       expect(id).to.exist;
     });
 
@@ -55,7 +55,7 @@ describe('usecases', () => {
       done();
     });
 
-    onJobFailed(error => {
+    onJobFailed((error) => {
       expect(error).to.not.exist;
       done(error);
     });
@@ -63,6 +63,6 @@ describe('usecases', () => {
     dispatch({ type: 'email', data });
   });
 
-  after(done => clear(done));
-  after(done => stop(done));
+  after((done) => clear(done));
+  after((done) => stop(done));
 });

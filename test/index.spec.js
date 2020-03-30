@@ -37,8 +37,8 @@ import {
 } from '../src';
 
 describe('common', () => {
-  beforeEach(done => clear(done));
-  beforeEach(done => stop(done));
+  beforeEach((done) => clear(done));
+  beforeEach((done) => stop(done));
 
   it('should expose job events as constants', () => {
     expect(ENQUEUE).to.be.equal('enqueue');
@@ -302,7 +302,7 @@ describe('common', () => {
     expect(jobs.compress.removeOnComplete).to.be.equal(true);
   });
 
-  it('should listen to http request', done => {
+  it('should listen to http request', (done) => {
     const { httpUsername, httpPassword } = withDefaults();
     const { app } = listen();
     request(app)
@@ -317,6 +317,6 @@ describe('common', () => {
       });
   });
 
-  after(done => clear(done));
-  after(done => stop(done));
+  after((done) => clear(done));
+  after((done) => stop(done));
 });

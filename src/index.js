@@ -127,7 +127,7 @@ export const reset = () => {
  * const redis = (process.env.REDIS_URL || { port: 6379, host: '127.0.0.1' });
  * withDefaults({ redis }) // => { redis: ...}
  */
-export const withDefaults = optns => {
+export const withDefaults = (optns) => {
   // merge defaults
   let options = mergeObjects(
     {
@@ -175,7 +175,7 @@ export const withDefaults = optns => {
  * const options = { redis: 'redis://example.com:1234?redis_option=value' };
  * const queue = createQueue(options);
  */
-export const createQueue = optns => {
+export const createQueue = (optns) => {
   // prepare options
   const options = withDefaults(optns);
 
@@ -217,7 +217,7 @@ export const createQueue = optns => {
  * const options = { redis: 'redis://example.com:1234?redis_option=value' };
  * const client = createClient(options);
  */
-export const createClient = optns => {
+export const createClient = (optns) => {
   // ensure single redis client per Queue per process
   if (!client) {
     client = createQueue(optns).client;
@@ -249,7 +249,7 @@ export const createClient = optns => {
  * const options = { redis: 'redis://example.com:1234?redis_option=value' };
  * const pubsub = createPubSub(options);
  */
-export const createPubSubClient = optns => {
+export const createPubSubClient = (optns) => {
   // ensure single redis pubsub client per Queue per process
   if (!pubsub) {
     createQueue(optns);
@@ -274,7 +274,7 @@ export const createPubSubClient = optns => {
  * @version 0.1.0
  * @private
  */
-const isJobDefinition = job => {
+const isJobDefinition = (job) => {
   const hasType = job && !_.isEmpty(job.type);
   const hasHandler = job && _.isFunction(job.process);
   const isValid = hasType && hasHandler;
@@ -300,7 +300,7 @@ const isJobDefinition = job => {
  * const { defineJob } = require('@lykmapipo/kue-common');
  * defineJob({type: 'email', process: (job, done) => { ... }}); // => jobs
  */
-export const defineJob = def => {
+export const defineJob = (def) => {
   // merge with defaults
   const job = withDefaults(def);
 
@@ -339,7 +339,7 @@ export const defineJob = def => {
  * // with custom jobs path
  * loadJobs({ jobsPath: __dirname }); // => { email: {...}, sms: {...} };
  */
-export const loadJobs = optns => {
+export const loadJobs = (optns) => {
   // merge with defaults
   const options = withDefaults(optns);
 
@@ -349,7 +349,7 @@ export const loadJobs = optns => {
     const defs = requireAll(jobsPath);
 
     // collect valid job definitions
-    const loadJob = def => defineJob(def);
+    const loadJob = (def) => defineJob(def);
     _.forEach(defs, loadJob);
   } catch (error) {
     /* ignore */
@@ -517,7 +517,7 @@ export const clear = (optns, cb) => {
       const multi = client.multi();
 
       // queue delete commands
-      _.forEach(keys, key => multi.del(key));
+      _.forEach(keys, (key) => multi.del(key));
 
       // execute delete command
       multi.exec(done);
@@ -544,7 +544,7 @@ export const clear = (optns, cb) => {
  * const { start } = require('@lykmapipo/kue-common');
  * start();
  */
-export const start = optns => {
+export const start = (optns) => {
   // limit job types per worker if provided
   const types = compact(optns && optns.types ? [].concat(optns.types) : []);
 
@@ -604,7 +604,7 @@ export const stop = (optns, cb) => {
 
   // shutdown queue instance if available
   if (queue && !queue.shuttingDown) {
-    const afterShutdown = error => {
+    const afterShutdown = (error) => {
       // reset queue and client(s) when shutdown succeed
       if (!error) {
         reset();
@@ -656,7 +656,7 @@ export const listen = (optns, cb) => {
   app.use(basicAuth(httpUsername, httpPassword));
   app.use(httpServer);
   if (httpEnabled) {
-    app.listen(httpPort, error => done(error, mergeObjects(options)));
+    app.listen(httpPort, (error) => done(error, mergeObjects(options)));
   } else {
     done(null, mergeObjects(options));
   }
@@ -678,7 +678,7 @@ export const listen = (optns, cb) => {
  * @static
  * @public
  */
-export const onJobEnqueue = cb => queue && queue.on(JOB_ENQUEUE, cb);
+export const onJobEnqueue = (cb) => queue && queue.on(JOB_ENQUEUE, cb);
 
 /**
  * @function onJobQueued
@@ -693,7 +693,7 @@ export const onJobEnqueue = cb => queue && queue.on(JOB_ENQUEUE, cb);
  * @static
  * @public
  */
-export const onJobQueued = cb => queue && queue.on(JOB_QUEUED, cb);
+export const onJobQueued = (cb) => queue && queue.on(JOB_QUEUED, cb);
 
 /**
  * @function onJobStart
@@ -708,7 +708,7 @@ export const onJobQueued = cb => queue && queue.on(JOB_QUEUED, cb);
  * @static
  * @public
  */
-export const onJobStart = cb => queue && queue.on(JOB_START, cb);
+export const onJobStart = (cb) => queue && queue.on(JOB_START, cb);
 
 /**
  * @function onJobPromotion
@@ -723,7 +723,7 @@ export const onJobStart = cb => queue && queue.on(JOB_START, cb);
  * @static
  * @public
  */
-export const onJobPromotion = cb => queue && queue.on(JOB_PROMOTION, cb);
+export const onJobPromotion = (cb) => queue && queue.on(JOB_PROMOTION, cb);
 
 /**
  * @function onJobProgress
@@ -738,7 +738,7 @@ export const onJobPromotion = cb => queue && queue.on(JOB_PROMOTION, cb);
  * @static
  * @public
  */
-export const onJobProgress = cb => queue && queue.on(JOB_PROGRESS, cb);
+export const onJobProgress = (cb) => queue && queue.on(JOB_PROGRESS, cb);
 
 /**
  * @function onFailedAttempt
@@ -753,7 +753,7 @@ export const onJobProgress = cb => queue && queue.on(JOB_PROGRESS, cb);
  * @static
  * @public
  */
-export const onJobFailedAttempt = cb =>
+export const onJobFailedAttempt = (cb) =>
   queue && queue.on(JOB_FAILED_ATTEMPT, cb);
 
 /**
@@ -769,7 +769,7 @@ export const onJobFailedAttempt = cb =>
  * @static
  * @public
  */
-export const onJobFailed = cb => queue && queue.on(JOB_FAILED, cb);
+export const onJobFailed = (cb) => queue && queue.on(JOB_FAILED, cb);
 
 /**
  * @function onJobComplete
@@ -784,7 +784,7 @@ export const onJobFailed = cb => queue && queue.on(JOB_FAILED, cb);
  * @static
  * @public
  */
-export const onJobComplete = cb => queue && queue.on(JOB_COMPLETE, cb);
+export const onJobComplete = (cb) => queue && queue.on(JOB_COMPLETE, cb);
 
 /**
  * @function onJobRemove
@@ -799,7 +799,7 @@ export const onJobComplete = cb => queue && queue.on(JOB_COMPLETE, cb);
  * @static
  * @public
  */
-export const onJobRemove = cb => queue && queue.on(JOB_REMOVE, cb);
+export const onJobRemove = (cb) => queue && queue.on(JOB_REMOVE, cb);
 
 /**
  * @function onError
@@ -814,4 +814,4 @@ export const onJobRemove = cb => queue && queue.on(JOB_REMOVE, cb);
  * @static
  * @public
  */
-export const onError = cb => queue && queue.on('error', cb);
+export const onError = (cb) => queue && queue.on('error', cb);
