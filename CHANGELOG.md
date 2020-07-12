@@ -1,3 +1,9 @@
+#### 0.6.18 (2020-07-12)
+
+##### Chores
+
+* **deps:**  force latest version & audit fix ([4b25f9de](https://github.com/lykmapipo/kue-common/commit/4b25f9dee527e37de3d513a0a161158604028599))
+
 #### 0.6.17 (2020-07-02)
 
 ##### Chores
