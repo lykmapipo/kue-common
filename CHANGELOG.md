@@ -1,3 +1,11 @@
+#### 0.6.26 (2020-12-21)
+
+##### Chores
+
+* **deps:**
+  *  force latest version & audit fix ([c864784a](https://github.com/lykmapipo/kue-common/commit/c864784ad321fb32d701836c2fc58d50c9f2867c))
+  *  bump ini from 1.3.5 to 1.3.7 ([759e4f8b](https://github.com/lykmapipo/kue-common/commit/759e4f8b2fb15371ec06be2b9d53e529187892a0))
+
 #### 0.6.25 (2020-10-07)
 
 ##### Chores
